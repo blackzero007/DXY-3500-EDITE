@@ -61,10 +61,8 @@ export function parseDateString(dateStr: string): { year: number; month: number;
 }
 
 export function isFutureDate(dateStr: string): boolean {
-  const today = new Date();
-  today.setHours(0, 0, 0, 0);
-  const date = new Date(dateStr);
-  return date > today;
+  const todayStr = getTodayString();
+  return dateStr > todayStr;
 }
 
 export function formatMonthYear(year: number, month: number): string {
