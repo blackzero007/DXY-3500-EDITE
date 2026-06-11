@@ -1,10 +1,18 @@
-import { Flame } from 'lucide-react';
+import { Link } from 'react-router-dom';
+import { Flame, Star } from 'lucide-react';
 import { useGameStore } from '../store/useGameStore';
+import { useFavoriteStore } from '../store/useFavoriteStore';
 import { formatDateDisplay, getTodayString } from '../utils/dateUtils';
+import { useEffect } from 'react';
 
 export function Header() {
   const { streak } = useGameStore();
+  const { favorites, initFavorites } = useFavoriteStore();
   const todayStr = getTodayString();
+
+  useEffect(() => {
+    initFavorites();
+  }, [initFavorites]);
 
   return (
     <header className="w-full flex items-center justify-between py-4 px-6">
@@ -19,6 +27,17 @@ export function Header() {
         <div className="text-sm text-gray-500 hidden sm:block">
           {formatDateDisplay(todayStr)}
         </div>
+
+        <Link
+          to="/favorites"
+          className="flex items-center gap-1.5 px-3 py-1.5 bg-gradient-to-r from-amber-50 to-yellow-50 rounded-full border border-amber-200 hover:from-amber-100 hover:to-yellow-100 transition-colors"
+          title="我的生词本"
+        >
+          <Star className="w-4 h-4 text-amber-500 fill-amber-500" />
+          <span className="text-sm font-semibold text-amber-600">
+            {favorites.length} 生词
+          </span>
+        </Link>
         
         <div className="flex items-center gap-1.5 px-3 py-1.5 bg-gradient-to-r from-orange-50 to-yellow-50 rounded-full border border-orange-200">
           <Flame className="w-4 h-4 text-orange-500" />

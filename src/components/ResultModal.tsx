@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
-import { Trophy, XCircle, Clock, Lightbulb, Volume2, Share2, RotateCcw } from 'lucide-react';
+import { Trophy, XCircle, Clock, Lightbulb, Volume2, Share2, RotateCcw, Star } from 'lucide-react';
 import { useGameStore } from '../store/useGameStore';
+import { useFavoriteStore } from '../store/useFavoriteStore';
 import { cn } from '../lib/utils';
 
 interface ConfettiPiece {
@@ -13,11 +14,17 @@ interface ConfettiPiece {
 
 export function ResultModal() {
   const { gameStatus, currentWord, timeLeft, hintsUsed, streak, retryGame } = useGameStore();
+  const { toggleFavorite, isFavoriteWord, initFavorites } = useFavoriteStore();
   const [show, setShow] = useState(false);
   const [confetti, setConfetti] = useState<ConfettiPiece[]>([]);
 
   const isSuccess = gameStatus === 'success';
   const isFailed = gameStatus === 'failed';
+  const isFavorited = currentWord ? isFavoriteWord(currentWord.word) : false;
+
+  useEffect(() => {
+    initFavorites();
+  }, [initFavorites]);
 
   useEffect(() => {
     if (isSuccess || isFailed) {
@@ -120,11 +127,27 @@ export function ResultModal() {
 
         <div className="p-6">
           <div className="text-center mb-6">
-            <h2 className="text-3xl font-bold text-gray-800 mb-1 tracking-wide">
-              {currentWord?.word.toUpperCase()}
-            </h2>
+            <div className="flex items-center justify-center gap-2">
+              <h2 className="text-3xl font-bold text-gray-800 tracking-wide">
+                {currentWord?.word.toUpperCase()}
+              </h2>
+              <button
+                onClick={() => currentWord && toggleFavorite(currentWord)}
+                className="p-2 hover:bg-amber-50 rounded-full transition-colors group"
+                title={isFavorited ? '取消收藏' : '收藏单词'}
+              >
+                <Star
+                  className={cn(
+                    'w-6 h-6 transition-all',
+                    isFavorited
+                      ? 'fill-amber-400 text-amber-400'
+                      : 'text-gray-300 group-hover:text-amber-400'
+                  )}
+                />
+              </button>
+            </div>
             {currentWord?.phonetic && (
-              <div className="flex items-center justify-center gap-2 text-gray-500">
+              <div className="flex items-center justify-center gap-2 text-gray-500 mt-1">
                 <span className="text-sm">{currentWord.phonetic}</span>
                 <button className="p-1 hover:bg-gray-100 rounded-full transition-colors">
                   <Volume2 className="w-4 h-4" />

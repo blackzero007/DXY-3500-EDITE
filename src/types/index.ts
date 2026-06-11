@@ -32,3 +32,11 @@ export interface LetterPosition {
   index: number;
   source: 'pool' | 'answer';
 }
+
+export interface FavoriteWord {
+  word: string;
+  meaning: string;
+  phonetic?: string;
+  example?: string;
+  addedAt: number;
+}
