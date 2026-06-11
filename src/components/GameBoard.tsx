@@ -1,9 +1,12 @@
 import { useEffect, useCallback, useState } from 'react';
-import { RotateCcw, Lightbulb, Send, HelpCircle, Play } from 'lucide-react';
+import { RotateCcw, Lightbulb, Send, HelpCircle, Play, Volume2 } from 'lucide-react';
 import { LetterCard } from './LetterCard';
 import { Timer } from './Timer';
 import { useGameStore } from '../store/useGameStore';
+import { useSpeech } from '../hooks/useSpeech';
 import { cn } from '../lib/utils';
+
+type SpeechRate = 'normal' | 'slow';
 
 export function GameBoard() {
   const {
@@ -23,6 +26,8 @@ export function GameBoard() {
 
   const [showMeaning, setShowMeaning] = useState(false);
   const [shakeAnswer, setShakeAnswer] = useState(false);
+  const [speechRate, setSpeechRate] = useState<SpeechRate>('normal');
+  const { speak, isSpeaking, isSupported } = useSpeech();
 
   useEffect(() => {
     initGame();
@@ -124,10 +129,53 @@ export function GameBoard() {
           </p>
           
           <div className="bg-orange-50 rounded-xl p-4 mb-6 border border-orange-100">
-            <p className="text-sm text-orange-700">
+            <p className="text-sm text-orange-700 mb-3">
               <span className="font-semibold">今日单词长度：</span>
               {currentWord.word.length} 个字母
             </p>
+            {isSupported && (
+              <div className="flex items-center justify-center gap-3">
+                <button
+                  onClick={() => speak(currentWord.word, speechRate)}
+                  className={cn(
+                    'flex items-center gap-1.5 px-3 py-1.5 rounded-full transition-all',
+                    isSpeaking
+                      ? 'bg-teal-200 text-teal-800'
+                      : 'bg-white text-gray-600 hover:bg-teal-50 hover:text-teal-600 border border-orange-200'
+                  )}
+                  title="播放发音"
+                >
+                  <Volume2 className={cn('w-4 h-4', isSpeaking && 'animate-pulse')} />
+                  <span className="text-sm font-medium">
+                    {isSpeaking ? '播放中...' : '听发音'}
+                  </span>
+                </button>
+                <div className="flex items-center bg-white rounded-full p-0.5 border border-orange-200">
+                  <button
+                    onClick={() => setSpeechRate('normal')}
+                    className={cn(
+                      'px-3 py-1 rounded-full text-xs font-medium transition-all',
+                      speechRate === 'normal'
+                        ? 'bg-orange-400 text-white shadow-sm'
+                        : 'text-gray-500 hover:text-gray-700'
+                    )}
+                  >
+                    正常
+                  </button>
+                  <button
+                    onClick={() => setSpeechRate('slow')}
+                    className={cn(
+                      'px-3 py-1 rounded-full text-xs font-medium transition-all',
+                      speechRate === 'slow'
+                        ? 'bg-orange-400 text-white shadow-sm'
+                        : 'text-gray-500 hover:text-gray-700'
+                    )}
+                  >
+                    慢速
+                  </button>
+                </div>
+              </div>
+            )}
           </div>
           
           <button
@@ -155,6 +203,51 @@ export function GameBoard() {
             {currentWord.word.length} 个字母
           </span>
         </div>
+
+        {isSupported && (
+          <div className="flex items-center justify-center gap-3 mb-3">
+            <button
+              onClick={() => currentWord && speak(currentWord.word, speechRate)}
+              className={cn(
+                'flex items-center gap-1.5 px-3 py-1.5 rounded-full transition-all',
+                isSpeaking
+                  ? 'bg-teal-100 text-teal-700'
+                  : 'bg-gray-100 text-gray-600 hover:bg-teal-50 hover:text-teal-600'
+              )}
+              title="播放发音"
+            >
+              <Volume2 className={cn('w-4 h-4', isSpeaking && 'animate-pulse')} />
+              <span className="text-sm font-medium">
+                {isSpeaking ? '播放中...' : '听发音'}
+              </span>
+            </button>
+
+            <div className="flex items-center bg-gray-100 rounded-full p-0.5">
+              <button
+                onClick={() => setSpeechRate('normal')}
+                className={cn(
+                  'px-3 py-1 rounded-full text-xs font-medium transition-all',
+                  speechRate === 'normal'
+                    ? 'bg-white text-teal-700 shadow-sm'
+                    : 'text-gray-500 hover:text-gray-700'
+                )}
+              >
+                正常
+              </button>
+              <button
+                onClick={() => setSpeechRate('slow')}
+                className={cn(
+                  'px-3 py-1 rounded-full text-xs font-medium transition-all',
+                  speechRate === 'slow'
+                    ? 'bg-white text-teal-700 shadow-sm'
+                    : 'text-gray-500 hover:text-gray-700'
+                )}
+              >
+                慢速
+              </button>
+            </div>
+          </div>
+        )}
 
         <div className="flex items-center justify-center gap-2">
           <button

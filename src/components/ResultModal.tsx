@@ -3,7 +3,10 @@ import { Trophy, XCircle, Clock, Lightbulb, Volume2, Share2, RotateCcw, Star } f
 import { useGameStore } from '../store/useGameStore';
 import { useFavoriteStore } from '../store/useFavoriteStore';
 import { useAchievementStore } from '../store/useAchievementStore';
+import { useSpeech } from '../hooks/useSpeech';
 import { cn } from '../lib/utils';
+
+type SpeechRate = 'normal' | 'slow';
 
 interface ConfettiPiece {
   id: number;
@@ -21,6 +24,8 @@ export function ResultModal() {
   const checkAchievements = useAchievementStore((s) => s.checkAchievements);
   const [show, setShow] = useState(false);
   const [confetti, setConfetti] = useState<ConfettiPiece[]>([]);
+  const [speechRate, setSpeechRate] = useState<SpeechRate>('normal');
+  const { speak, isSpeaking, isSupported } = useSpeech();
 
   const isSuccess = gameStatus === 'success';
   const isFailed = gameStatus === 'failed';
@@ -151,12 +156,50 @@ export function ResultModal() {
                 />
               </button>
             </div>
-            {currentWord?.phonetic && (
-              <div className="flex items-center justify-center gap-2 text-gray-500 mt-1">
-                <span className="text-sm">{currentWord.phonetic}</span>
-                <button className="p-1 hover:bg-gray-100 rounded-full transition-colors">
-                  <Volume2 className="w-4 h-4" />
+            {isSupported && (
+              <div className="flex items-center justify-center gap-3 mt-2">
+                {currentWord?.phonetic && (
+                  <span className="text-sm text-gray-500">{currentWord.phonetic}</span>
+                )}
+                <button
+                  onClick={() => currentWord && speak(currentWord.word, speechRate)}
+                  className={cn(
+                    'flex items-center gap-1.5 px-3 py-1.5 rounded-full transition-all',
+                    isSpeaking
+                      ? 'bg-teal-100 text-teal-700'
+                      : 'bg-gray-100 text-gray-600 hover:bg-teal-50 hover:text-teal-600'
+                  )}
+                  title="播放发音"
+                >
+                  <Volume2 className={cn('w-4 h-4', isSpeaking && 'animate-pulse')} />
+                  <span className="text-sm font-medium">
+                    {isSpeaking ? '播放中...' : '跟读'}
+                  </span>
                 </button>
+                <div className="flex items-center bg-gray-100 rounded-full p-0.5">
+                  <button
+                    onClick={() => setSpeechRate('normal')}
+                    className={cn(
+                      'px-2.5 py-1 rounded-full text-xs font-medium transition-all',
+                      speechRate === 'normal'
+                        ? 'bg-white text-teal-700 shadow-sm'
+                        : 'text-gray-500 hover:text-gray-700'
+                    )}
+                  >
+                    正常
+                  </button>
+                  <button
+                    onClick={() => setSpeechRate('slow')}
+                    className={cn(
+                      'px-2.5 py-1 rounded-full text-xs font-medium transition-all',
+                      speechRate === 'slow'
+                        ? 'bg-white text-teal-700 shadow-sm'
+                        : 'text-gray-500 hover:text-gray-700'
+                    )}
+                  >
+                    慢速
+                  </button>
+                </div>
               </div>
             )}
             <p className="text-lg text-gray-600 mt-2">{currentWord?.meaning}</p>
