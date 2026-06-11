@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Star, ArrowLeft, Trash2, ArrowUpDown, Volume2, BookOpen } from 'lucide-react';
 import { useFavoriteStore, type SortOrder } from '../store/useFavoriteStore';
@@ -16,16 +16,24 @@ function formatDate(timestamp: number): string {
 
 export default function Favorites() {
   const navigate = useNavigate();
-  const { initFavorites, getSortedFavorites, removeFavoriteWord, setSortOrder, sortOrder } = useFavoriteStore();
-  const [sortedFavorites, setSortedFavorites] = useState(getSortedFavorites());
+  const initFavorites = useFavoriteStore((s) => s.initFavorites);
+  const favorites = useFavoriteStore((s) => s.favorites);
+  const sortOrder = useFavoriteStore((s) => s.sortOrder);
+  const setSortOrder = useFavoriteStore((s) => s.setSortOrder);
+  const removeFavoriteWord = useFavoriteStore((s) => s.removeFavoriteWord);
+
+  const sortedFavorites = useMemo(() => {
+    return [...favorites].sort((a, b) => {
+      if (sortOrder === 'desc') {
+        return b.addedAt - a.addedAt;
+      }
+      return a.addedAt - b.addedAt;
+    });
+  }, [favorites, sortOrder]);
 
   useEffect(() => {
     initFavorites();
   }, [initFavorites]);
-
-  useEffect(() => {
-    setSortedFavorites(getSortedFavorites());
-  }, [getSortedFavorites, sortOrder]);
 
   const handleToggleSort = () => {
     const newOrder: SortOrder = sortOrder === 'desc' ? 'asc' : 'desc';

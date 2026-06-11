@@ -6,8 +6,9 @@ import { formatDateDisplay, getTodayString } from '../utils/dateUtils';
 import { useEffect } from 'react';
 
 export function Header() {
-  const { streak } = useGameStore();
-  const { favorites, initFavorites } = useFavoriteStore();
+  const streak = useGameStore((s) => s.streak);
+  const initFavorites = useFavoriteStore((s) => s.initFavorites);
+  const favorites = useFavoriteStore((s) => s.favorites);
   const todayStr = getTodayString();
 
   useEffect(() => {

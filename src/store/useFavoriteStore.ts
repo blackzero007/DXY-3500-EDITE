@@ -4,7 +4,6 @@ import {
   getFavorites,
   saveFavorite,
   removeFavorite,
-  isFavorite as checkIsFavorite,
 } from '../utils/storage';
 
 export type SortOrder = 'desc' | 'asc';
@@ -16,9 +15,7 @@ interface FavoriteStore {
   addFavorite: (word: Word) => void;
   removeFavoriteWord: (word: string) => void;
   toggleFavorite: (word: Word) => void;
-  isFavoriteWord: (word: string) => boolean;
   setSortOrder: (order: SortOrder) => void;
-  getSortedFavorites: () => FavoriteWord[];
 }
 
 export const useFavoriteStore = create<FavoriteStore>((set, get) => ({
@@ -26,14 +23,21 @@ export const useFavoriteStore = create<FavoriteStore>((set, get) => ({
   sortOrder: 'desc',
 
   initFavorites: () => {
-    set({ favorites: getFavorites() });
+    const data = getFavorites();
+    set({ favorites: data });
   },
 
   addFavorite: (word: Word) => {
-    const saved = saveFavorite(word);
-    set((state) => ({
-      favorites: [...state.favorites, saved],
-    }));
+    const { favorites } = get();
+    if (favorites.some((f) => f.word === word.word)) {
+      return;
+    }
+    const newFavorite: FavoriteWord = {
+      ...word,
+      addedAt: Date.now(),
+    };
+    saveFavorite(word);
+    set({ favorites: [...favorites, newFavorite] });
   },
 
   removeFavoriteWord: (word: string) => {
@@ -44,29 +48,16 @@ export const useFavoriteStore = create<FavoriteStore>((set, get) => ({
   },
 
   toggleFavorite: (word: Word) => {
-    const exists = get().isFavoriteWord(word.word);
+    const { favorites, addFavorite, removeFavoriteWord } = get();
+    const exists = favorites.some((f) => f.word === word.word);
     if (exists) {
-      get().removeFavoriteWord(word.word);
+      removeFavoriteWord(word.word);
     } else {
-      get().addFavorite(word);
+      addFavorite(word);
     }
-  },
-
-  isFavoriteWord: (word: string) => {
-    return get().favorites.some((f) => f.word === word) || checkIsFavorite(word);
   },
 
   setSortOrder: (order: SortOrder) => {
     set({ sortOrder: order });
-  },
-
-  getSortedFavorites: () => {
-    const { favorites, sortOrder } = get();
-    return [...favorites].sort((a, b) => {
-      if (sortOrder === 'desc') {
-        return b.addedAt - a.addedAt;
-      }
-      return a.addedAt - b.addedAt;
-    });
   },
 }));

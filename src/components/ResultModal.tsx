@@ -14,13 +14,15 @@ interface ConfettiPiece {
 
 export function ResultModal() {
   const { gameStatus, currentWord, timeLeft, hintsUsed, streak, retryGame } = useGameStore();
-  const { toggleFavorite, isFavoriteWord, initFavorites } = useFavoriteStore();
+  const initFavorites = useFavoriteStore((s) => s.initFavorites);
+  const toggleFavorite = useFavoriteStore((s) => s.toggleFavorite);
+  const favorites = useFavoriteStore((s) => s.favorites);
   const [show, setShow] = useState(false);
   const [confetti, setConfetti] = useState<ConfettiPiece[]>([]);
 
   const isSuccess = gameStatus === 'success';
   const isFailed = gameStatus === 'failed';
-  const isFavorited = currentWord ? isFavoriteWord(currentWord.word) : false;
+  const isFavorited = currentWord ? favorites.some((f) => f.word === currentWord.word) : false;
 
   useEffect(() => {
     initFavorites();
