@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import { Flame, Star } from 'lucide-react';
+import { Flame, Star, Calendar } from 'lucide-react';
 import { useGameStore } from '../store/useGameStore';
 import { useFavoriteStore } from '../store/useFavoriteStore';
 import { formatDateDisplay, getTodayString } from '../utils/dateUtils';
@@ -28,6 +28,17 @@ export function Header() {
         <div className="text-sm text-gray-500 hidden sm:block">
           {formatDateDisplay(todayStr)}
         </div>
+
+        <Link
+          to="/history"
+          className="flex items-center gap-1.5 px-3 py-1.5 bg-gradient-to-r from-teal-50 to-emerald-50 rounded-full border border-teal-200 hover:from-teal-100 hover:to-emerald-100 transition-colors"
+          title="历史记录"
+        >
+          <Calendar className="w-4 h-4 text-teal-500" />
+          <span className="text-sm font-semibold text-teal-600 hidden sm:inline">
+            历史记录
+          </span>
+        </Link>
 
         <Link
           to="/favorites"

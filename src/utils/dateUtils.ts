@@ -40,3 +40,33 @@ export function formatDateDisplay(dateStr: string): string {
   const day = date.getDate();
   return `${year}年${month}月${day}日`;
 }
+
+export function getDaysInMonth(year: number, month: number): number {
+  return new Date(year, month + 1, 0).getDate();
+}
+
+export function getFirstDayOfMonth(year: number, month: number): number {
+  return new Date(year, month, 1).getDay();
+}
+
+export function formatDateString(year: number, month: number, day: number): string {
+  const m = String(month + 1).padStart(2, '0');
+  const d = String(day).padStart(2, '0');
+  return `${year}-${m}-${d}`;
+}
+
+export function parseDateString(dateStr: string): { year: number; month: number; day: number } {
+  const [year, month, day] = dateStr.split('-').map(Number);
+  return { year, month: month - 1, day };
+}
+
+export function isFutureDate(dateStr: string): boolean {
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  const date = new Date(dateStr);
+  return date > today;
+}
+
+export function formatMonthYear(year: number, month: number): string {
+  return `${year}年${month + 1}月`;
+}
