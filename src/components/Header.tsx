@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import { Flame, Star, Calendar, Volume2, VolumeX } from 'lucide-react';
+import { Flame, Star, Calendar, Volume2, VolumeX, Trophy } from 'lucide-react';
 import { useGameStore } from '../store/useGameStore';
 import { useFavoriteStore } from '../store/useFavoriteStore';
 import { useSettingsStore } from '../store/useSettingsStore';
@@ -59,6 +59,17 @@ export function Header() {
           <Calendar className="w-4 h-4 text-teal-500" />
           <span className="text-sm font-semibold text-teal-600 hidden sm:inline">
             历史记录
+          </span>
+        </Link>
+
+        <Link
+          to="/leaderboard"
+          className="flex items-center gap-1.5 px-3 py-1.5 bg-gradient-to-r from-yellow-50 to-amber-50 rounded-full border border-yellow-200 hover:from-yellow-100 hover:to-amber-100 transition-colors"
+          title="排行榜"
+        >
+          <Trophy className="w-4 h-4 text-yellow-600" />
+          <span className="text-sm font-semibold text-yellow-700 hidden sm:inline">
+            排行榜
           </span>
         </Link>
 
