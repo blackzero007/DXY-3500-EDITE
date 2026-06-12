@@ -6,6 +6,7 @@ import { useAchievementStore } from '../store/useAchievementStore';
 import { useSpeech } from '../hooks/useSpeech';
 import { getGameModeConfig } from '../config/gameModes';
 import { cn } from '../lib/utils';
+import { soundManager } from '../utils/soundManager';
 
 type SpeechRate = 'normal' | 'slow';
 
@@ -39,7 +40,14 @@ export function ResultModal() {
 
   useEffect(() => {
     if (isSuccess || isFailed) {
-      const timer = setTimeout(() => setShow(true), 300);
+      const timer = setTimeout(() => {
+        setShow(true);
+        if (isSuccess) {
+          soundManager.play('success');
+        } else {
+          soundManager.play('failed');
+        }
+      }, 300);
       checkAchievements();
       return () => clearTimeout(timer);
     } else {

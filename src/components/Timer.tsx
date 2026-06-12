@@ -1,13 +1,15 @@
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import { Clock } from 'lucide-react';
 import { useGameStore } from '../store/useGameStore';
 import { getGameModeConfig } from '../config/gameModes';
 import { cn } from '../lib/utils';
+import { soundManager } from '../utils/soundManager';
 
 export function Timer() {
   const { timeLeft, gameStatus, gameMode, tick } = useGameStore();
   const config = getGameModeConfig(gameMode);
   const totalTime = config.timeLimit || 60;
+  const lastTickTime = useRef<number>(timeLeft);
 
   useEffect(() => {
     if (gameStatus !== 'playing') return;
@@ -18,6 +20,19 @@ export function Timer() {
 
     return () => clearInterval(timer);
   }, [gameStatus, tick]);
+
+  useEffect(() => {
+    if (gameStatus !== 'playing') {
+      lastTickTime.current = timeLeft;
+      return;
+    }
+
+    if (timeLeft < lastTickTime.current && timeLeft <= 5 && timeLeft > 0) {
+      soundManager.play('countdownTick');
+    }
+
+    lastTickTime.current = timeLeft;
+  }, [timeLeft, gameStatus]);
 
   const warningThreshold = Math.max(10, Math.floor(totalTime * 0.2));
   const criticalThreshold = Math.max(3, Math.floor(totalTime * 0.1));

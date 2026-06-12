@@ -6,6 +6,7 @@ const STORAGE_KEYS = {
   LAST_PLAY_DATE: 'word_puzzle_last_date',
   FAVORITES: 'word_puzzle_favorites',
   ACHIEVEMENTS: 'word_puzzle_achievements',
+  SETTINGS: 'word_puzzle_settings',
 };
 
 export function getGameRecords(): GameRecord[] {
@@ -132,5 +133,34 @@ export function saveAchievements(achievements: AchievementProgress[]): void {
     localStorage.setItem(STORAGE_KEYS.ACHIEVEMENTS, JSON.stringify(achievements));
   } catch {
     console.error('Failed to save achievements');
+  }
+}
+
+export interface AppSettings {
+  soundEnabled: boolean;
+}
+
+const DEFAULT_SETTINGS: AppSettings = {
+  soundEnabled: true,
+};
+
+export function getSettings(): AppSettings {
+  try {
+    const data = localStorage.getItem(STORAGE_KEYS.SETTINGS);
+    if (data) {
+      const parsed = JSON.parse(data);
+      return { ...DEFAULT_SETTINGS, ...parsed };
+    }
+  } catch {
+    // ignore
+  }
+  return { ...DEFAULT_SETTINGS };
+}
+
+export function saveSettings(settings: AppSettings): void {
+  try {
+    localStorage.setItem(STORAGE_KEYS.SETTINGS, JSON.stringify(settings));
+  } catch {
+    console.error('Failed to save settings');
   }
 }

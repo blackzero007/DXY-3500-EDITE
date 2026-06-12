@@ -7,6 +7,7 @@ import { ResultModal } from '@/components/ResultModal';
 import { BadgeWall } from '@/components/BadgeWall';
 import { useGameStore } from '@/store/useGameStore';
 import { useAchievementStore } from '@/store/useAchievementStore';
+import { useSettingsStore } from '@/store/useSettingsStore';
 import { getGameModeConfig } from '@/config/gameModes';
 import type { GameMode } from '@/types';
 import { cn } from '@/lib/utils';
@@ -23,13 +24,15 @@ export default function GamePage() {
   const retryGame = useGameStore((s) => s.retryGame);
   const initAchievements = useAchievementStore((s) => s.initAchievements);
   const checkAchievements = useAchievementStore((s) => s.checkAchievements);
+  const initSettings = useSettingsStore((s) => s.initSettings);
 
   const [key, setKey] = useState(0);
 
   useEffect(() => {
     initAchievements();
     checkAchievements();
-  }, [initAchievements, checkAchievements]);
+    initSettings();
+  }, [initAchievements, checkAchievements, initSettings]);
 
   useEffect(() => {
     if (mode) {

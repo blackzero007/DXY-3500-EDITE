@@ -1,7 +1,8 @@
 import { Link } from 'react-router-dom';
-import { Flame, Star, Calendar } from 'lucide-react';
+import { Flame, Star, Calendar, Volume2, VolumeX } from 'lucide-react';
 import { useGameStore } from '../store/useGameStore';
 import { useFavoriteStore } from '../store/useFavoriteStore';
+import { useSettingsStore } from '../store/useSettingsStore';
 import { formatDateDisplay, getTodayString } from '../utils/dateUtils';
 import { useEffect } from 'react';
 
@@ -9,11 +10,15 @@ export function Header() {
   const streak = useGameStore((s) => s.streak);
   const initFavorites = useFavoriteStore((s) => s.initFavorites);
   const favorites = useFavoriteStore((s) => s.favorites);
+  const initSettings = useSettingsStore((s) => s.initSettings);
+  const soundEnabled = useSettingsStore((s) => s.soundEnabled);
+  const toggleSound = useSettingsStore((s) => s.toggleSound);
   const todayStr = getTodayString();
 
   useEffect(() => {
     initFavorites();
-  }, [initFavorites]);
+    initSettings();
+  }, [initFavorites, initSettings]);
 
   return (
     <header className="w-full flex items-center justify-between py-4 px-6">
@@ -24,10 +29,27 @@ export function Header() {
         <h1 className="text-xl font-bold text-gray-800">每日单词拼图</h1>
       </div>
 
-      <div className="flex items-center gap-4">
+      <div className="flex items-center gap-3 sm:gap-4">
         <div className="text-sm text-gray-500 hidden sm:block">
           {formatDateDisplay(todayStr)}
         </div>
+
+        <button
+          onClick={toggleSound}
+          className={[
+            'flex items-center justify-center w-9 h-9 rounded-full border transition-all',
+            soundEnabled
+              ? 'bg-gradient-to-r from-teal-50 to-emerald-50 border-teal-200 hover:from-teal-100 hover:to-emerald-100'
+              : 'bg-gray-50 border-gray-200 hover:bg-gray-100'
+          ].join(' ')}
+          title={soundEnabled ? '关闭音效' : '开启音效'}
+        >
+          {soundEnabled ? (
+            <Volume2 className="w-4 h-4 text-teal-500" />
+          ) : (
+            <VolumeX className="w-4 h-4 text-gray-400" />
+          )}
+        </button>
 
         <Link
           to="/history"

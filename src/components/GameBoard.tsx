@@ -6,6 +6,7 @@ import { useGameStore } from '../store/useGameStore';
 import { useSpeech } from '../hooks/useSpeech';
 import { getGameModeConfig } from '../config/gameModes';
 import { cn } from '../lib/utils';
+import { soundManager } from '../utils/soundManager';
 
 type SpeechRate = 'normal' | 'slow';
 
@@ -46,8 +47,10 @@ export function GameBoard() {
 
       if (fromSource === 'pool' && toSource === 'answer') {
         placeLetter(letter, fromIndex, toIndex);
+        soundManager.play('placeLetter');
       } else if (fromSource === 'answer' && toSource === 'pool') {
         removeLetter(fromIndex);
+        soundManager.play('removeLetter');
       }
     };
 
@@ -71,8 +74,10 @@ export function GameBoard() {
 
         if (fromSource === 'pool' && toSource === 'answer') {
           placeLetter(letter, fromIndex, toIndex);
+          soundManager.play('placeLetter');
         } else if (fromSource === 'answer' && toSource === 'pool') {
           removeLetter(fromIndex);
+          soundManager.play('removeLetter');
         }
       } catch {
         // 忽略无效数据
@@ -87,12 +92,14 @@ export function GameBoard() {
     const firstEmptyIndex = answerLetters.findIndex((l) => l === null);
     if (firstEmptyIndex >= 0) {
       placeLetter(letter, index, firstEmptyIndex);
+      soundManager.play('placeLetter');
     }
   };
 
   const handleAnswerCardClick = (index: number) => {
     if (gameStatus !== 'playing') return;
     removeLetter(index);
+    soundManager.play('removeLetter');
   };
 
   const handleSubmit = () => {
@@ -100,7 +107,10 @@ export function GameBoard() {
     if (!allFilled) return;
 
     const isCorrect = submitAnswer();
-    if (!isCorrect) {
+    if (isCorrect) {
+      soundManager.play('submitCorrect');
+    } else {
+      soundManager.play('submitWrong');
       setShakeAnswer(true);
       setTimeout(() => setShakeAnswer(false), 500);
     }
