@@ -7,7 +7,7 @@ import { useSpeech } from '../hooks/useSpeech';
 import { getGameModeConfig } from '../config/gameModes';
 import { cn } from '../lib/utils';
 import { soundManager } from '../utils/soundManager';
-import { generatePoster, shareImage, saveToAlbum, type PosterData } from '../utils/posterGenerator';
+import { generatePoster, shareImage, saveToAlbum, type PosterData, type SaveMethod } from '../utils/posterGenerator';
 
 type SpeechRate = 'normal' | 'slow';
 
@@ -141,16 +141,23 @@ export function ResultModal() {
     }
   };
 
+  const getSaveMessage = (method?: SaveMethod) => {
+    switch (method) {
+      case 'download':
+        return '海报已保存到下载文件夹';
+      case 'clipboard':
+        return '海报已复制到剪贴板，您可以粘贴到相册或聊天窗口';
+      default:
+        return '保存失败，请重试';
+    }
+  };
+
   const handleSaveToAlbum = async () => {
     if (!posterUrl) return;
     
     try {
-      const success = await saveToAlbum(posterUrl);
-      if (success) {
-        alert('海报已保存到相册/下载文件夹');
-      } else {
-        alert('保存失败，请重试');
-      }
+      const result = await saveToAlbum(posterUrl);
+      alert(getSaveMessage(result.method));
     } catch (error) {
       console.error('保存失败:', error);
       alert('保存失败，请重试');
@@ -164,8 +171,8 @@ export function ResultModal() {
       const text = getShareText();
       const success = await shareImage(posterUrl, text);
       if (!success) {
-        alert('当前浏览器不支持分享图片，已自动保存到相册');
-        await saveToAlbum(posterUrl);
+        const result = await saveToAlbum(posterUrl);
+        alert(`当前浏览器不支持直接分享图片，${getSaveMessage(result.method)}`);
       }
     } catch (error) {
       console.error('分享失败:', error);

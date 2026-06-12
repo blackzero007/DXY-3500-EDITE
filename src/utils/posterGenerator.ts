@@ -332,22 +332,36 @@ export async function shareImage(dataUrl: string, text: string): Promise<boolean
   }
 }
 
-export async function saveToAlbum(dataUrl: string): Promise<boolean> {
+export type SaveMethod = 'download' | 'clipboard';
+
+export interface SaveResult {
+  success: boolean;
+  method?: SaveMethod;
+}
+
+export async function saveToAlbum(dataUrl: string): Promise<SaveResult> {
   try {
-    if (navigator.clipboard && window.ClipboardItem) {
-      const response = await fetch(dataUrl);
-      const blob = await response.blob();
-      await navigator.clipboard.write([
-        new ClipboardItem({
-          [blob.type]: blob,
-        }),
-      ]);
-      return true;
+    try {
+      await downloadImage(dataUrl);
+      return { success: true, method: 'download' };
+    } catch (downloadError) {
+      console.warn('下载失败，尝试复制到剪贴板:', downloadError);
+      
+      if (navigator.clipboard && window.ClipboardItem) {
+        const response = await fetch(dataUrl);
+        const blob = await response.blob();
+        await navigator.clipboard.write([
+          new ClipboardItem({
+            [blob.type]: blob,
+          }),
+        ]);
+        return { success: true, method: 'clipboard' };
+      }
+      
+      return { success: false };
     }
-    await downloadImage(dataUrl);
-    return true;
   } catch (error) {
     console.error('保存失败:', error);
-    return false;
+    return { success: false };
   }
 }
