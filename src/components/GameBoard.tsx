@@ -1,4 +1,4 @@
-import { useEffect, useCallback, useState } from 'react';
+import { useEffect, useCallback, useState, useRef } from 'react';
 import { RotateCcw, Lightbulb, Send, HelpCircle, Play, Volume2, Eye } from 'lucide-react';
 import { LetterCard } from './LetterCard';
 import { Timer } from './Timer';
@@ -34,6 +34,9 @@ export function GameBoard() {
   const [speechRate, setSpeechRate] = useState<SpeechRate>('normal');
   const { speak, isSpeaking, isSupported } = useSpeech();
 
+  const poolRef = useRef<HTMLDivElement>(null);
+  const answerRef = useRef<HTMLDivElement>(null);
+
   useEffect(() => {
     if (gameStatus === 'idle' && !currentWord) {
       initGame(gameMode);
@@ -59,6 +62,56 @@ export function GameBoard() {
       document.removeEventListener('letter-dropped', handleLetterDropped);
     };
   }, [placeLetter, removeLetter]);
+
+  useEffect(() => {
+    const getFocusableCards = (container: HTMLDivElement | null) => {
+      if (!container) return [] as HTMLElement[];
+      return Array.from(container.querySelectorAll<HTMLElement>('[role="button"]:not([aria-disabled="true"])'));
+    };
+
+    const handleGlobalKeyDown = (e: KeyboardEvent) => {
+      if (gameStatus !== 'playing') return;
+
+      const activeElement = document.activeElement as HTMLElement;
+      const isInPool = poolRef.current?.contains(activeElement);
+      const isInAnswer = answerRef.current?.contains(activeElement);
+
+      if (e.key === 'Backspace') {
+        e.preventDefault();
+        const lastFilledIndex = [...answerLetters].map((l, i) => l !== null ? i : -1).filter(i => i !== -1).pop();
+        if (lastFilledIndex !== undefined && lastFilledIndex >= 0) {
+          removeLetter(lastFilledIndex);
+          soundManager.play('removeLetter');
+        }
+        return;
+      }
+
+      if (e.key === 'ArrowLeft' || e.key === 'ArrowRight' || e.key === 'ArrowUp' || e.key === 'ArrowDown') {
+        if (!isInPool && !isInAnswer) return;
+
+        e.preventDefault();
+        const container = isInPool ? poolRef.current : answerRef.current;
+        const cards = getFocusableCards(container);
+        if (cards.length === 0) return;
+
+        const currentIndex = cards.findIndex(card => card === activeElement);
+        let nextIndex = currentIndex;
+
+        if (e.key === 'ArrowRight' || e.key === 'ArrowDown') {
+          nextIndex = (currentIndex + 1) % cards.length;
+        } else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') {
+          nextIndex = (currentIndex - 1 + cards.length) % cards.length;
+        }
+
+        cards[nextIndex]?.focus();
+      }
+    };
+
+    document.addEventListener('keydown', handleGlobalKeyDown);
+    return () => {
+      document.removeEventListener('keydown', handleGlobalKeyDown);
+    };
+  }, [gameStatus, answerLetters, removeLetter]);
 
   const handleDragOver = useCallback((e: React.DragEvent) => {
     e.preventDefault();
@@ -322,6 +375,7 @@ export function GameBoard() {
       </div>
 
       <div
+        ref={answerRef}
         data-answer-slot
         className={cn(
           'flex justify-center gap-2 sm:gap-3 mb-8 p-4',
@@ -360,6 +414,7 @@ export function GameBoard() {
       </div>
 
       <div
+        ref={poolRef}
         data-pool-slot
         className="flex flex-wrap justify-center gap-2 sm:gap-3 p-4 bg-white rounded-2xl shadow-inner mb-6 min-h-24 sm:min-h-28"
         onDragOver={handleDragOver}

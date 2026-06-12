@@ -8,8 +8,10 @@ interface LetterCardProps {
   onDragStart?: (index: number, source: 'pool' | 'answer') => void;
   onDragEnd?: () => void;
   onClick?: () => void;
+  onKeyDown?: (e: React.KeyboardEvent) => void;
   disabled?: boolean;
   isHinted?: boolean;
+  ariaLabel?: string;
 }
 
 const COLORS = [
@@ -30,8 +32,10 @@ export function LetterCard({
   onDragStart,
   onDragEnd,
   onClick,
+  onKeyDown,
   disabled = false,
   isHinted = false,
+  ariaLabel,
 }: LetterCardProps) {
   const [isDragging, setIsDragging] = useState(false);
   const [isTouchDragging, setIsTouchDragging] = useState(false);
@@ -40,6 +44,15 @@ export function LetterCard({
 
   const colorIndex = (letter.charCodeAt(0) + index) % COLORS.length;
   const gradient = COLORS[colorIndex];
+
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (disabled) return;
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      onClick?.();
+    }
+    onKeyDown?.(e);
+  };
 
   const handleDragStart = (e: React.DragEvent) => {
     if (disabled || !letter) return;
@@ -117,9 +130,15 @@ export function LetterCard({
     );
   }
 
+  const defaultAriaLabel = source === 'pool'
+    ? `字母 ${letter.toUpperCase()}，在字母池中第 ${index + 1} 位`
+    : `字母 ${letter.toUpperCase()}，答案区第 ${index + 1} 位，按回车或空格移回字母池`;
+
   return (
     <div
       ref={cardRef}
+      role="button"
+      tabIndex={disabled ? -1 : 0}
       draggable={!disabled && !!letter}
       onDragStart={handleDragStart}
       onDragEnd={handleDragEnd}
@@ -127,6 +146,9 @@ export function LetterCard({
       onTouchMove={handleTouchMove}
       onTouchEnd={handleTouchEnd}
       onClick={onClick}
+      onKeyDown={handleKeyDown}
+      aria-label={ariaLabel || defaultAriaLabel}
+      aria-disabled={disabled}
       className={cn(
         'w-12 h-12 sm:w-14 sm:h-14 md:w-16 md:h-16',
         'flex items-center justify-center',
@@ -137,6 +159,7 @@ export function LetterCard({
         'transition-all duration-200',
         'hover:scale-105 hover:shadow-xl',
         'active:scale-95',
+        'focus:outline-none focus:ring-4 focus:ring-blue-400 focus:ring-offset-2 focus:scale-105',
         gradient,
         isDragging && 'opacity-50 scale-110',
         isTouchDragging && 'opacity-70 scale-110 z-50',
