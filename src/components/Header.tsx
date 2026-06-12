@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import { Flame, Star, Calendar, Volume2, VolumeX, Trophy, Settings } from 'lucide-react';
+import { Flame, Star, Calendar, Volume2, VolumeX, Trophy, Settings, HelpCircle } from 'lucide-react';
 import { useGameStore } from '../store/useGameStore';
 import { useFavoriteStore } from '../store/useFavoriteStore';
 import { useSettingsStore } from '../store/useSettingsStore';
@@ -8,9 +8,10 @@ import { useEffect } from 'react';
 
 interface HeaderProps {
   onOpenSettings?: () => void;
+  onOpenHelp?: () => void;
 }
 
-export function Header({ onOpenSettings }: HeaderProps) {
+export function Header({ onOpenSettings, onOpenHelp }: HeaderProps) {
   const streak = useGameStore((s) => s.streak);
   const initFavorites = useFavoriteStore((s) => s.initFavorites);
   const favorites = useFavoriteStore((s) => s.favorites);
@@ -25,15 +26,15 @@ export function Header({ onOpenSettings }: HeaderProps) {
   }, [initFavorites, initSettings]);
 
   return (
-    <header className="w-full flex items-center justify-between py-4 px-6">
-      <div className="flex items-center gap-2">
+    <header className="w-full flex flex-col gap-3 py-4 px-4 sm:flex-row sm:items-center sm:justify-between sm:px-6">
+      <div className="flex items-center gap-2 min-w-0">
         <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-orange-400 to-orange-600 flex items-center justify-center shadow-lg">
           <span className="text-white text-lg font-bold">拼</span>
         </div>
-        <h1 className="text-xl font-bold text-gray-800">每日单词拼图</h1>
+        <h1 className="text-xl font-bold text-gray-800 truncate">每日单词拼图</h1>
       </div>
 
-      <div className="flex items-center gap-3 sm:gap-4">
+      <div className="flex flex-wrap items-center gap-2 sm:justify-end sm:gap-4">
         <div className="text-sm text-gray-500 hidden sm:block">
           {formatDateDisplay(todayStr)}
         </div>
@@ -62,6 +63,16 @@ export function Header({ onOpenSettings }: HeaderProps) {
             title="设置"
           >
             <Settings className="w-4 h-4 text-indigo-500" />
+          </button>
+        )}
+
+        {onOpenHelp && (
+          <button
+            onClick={onOpenHelp}
+            className="flex items-center justify-center w-9 h-9 rounded-full border transition-all bg-gradient-to-r from-cyan-50 to-blue-50 border-cyan-200 hover:from-cyan-100 hover:to-blue-100"
+            title="帮助"
+          >
+            <HelpCircle className="w-4 h-4 text-cyan-500" />
           </button>
         )}
 

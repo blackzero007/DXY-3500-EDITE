@@ -3,17 +3,29 @@ import { Header } from '@/components/Header';
 import { ModeSelector } from '@/components/ModeSelector';
 import { BadgeWall } from '@/components/BadgeWall';
 import { SettingsModal } from '@/components/SettingsModal';
+import { HelpGuideModal } from '@/components/HelpGuideModal';
 import { useAchievementStore } from '@/store/useAchievementStore';
+import { hasShownGuide } from '@/utils/storage';
 
 export default function Home() {
   const initAchievements = useAchievementStore((s) => s.initAchievements);
   const checkAchievements = useAchievementStore((s) => s.checkAchievements);
   const [showSettings, setShowSettings] = useState(false);
+  const [showHelpGuide, setShowHelpGuide] = useState(false);
 
   useEffect(() => {
     initAchievements();
     checkAchievements();
   }, [initAchievements, checkAchievements]);
+
+  useEffect(() => {
+    if (!hasShownGuide()) {
+      const timer = setTimeout(() => {
+        setShowHelpGuide(true);
+      }, 500);
+      return () => clearTimeout(timer);
+    }
+  }, []);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-amber-50 via-orange-50 to-teal-50">
@@ -24,7 +36,10 @@ export default function Home() {
       </div>
 
       <div className="relative z-10">
-        <Header onOpenSettings={() => setShowSettings(true)} />
+        <Header 
+          onOpenSettings={() => setShowSettings(true)} 
+          onOpenHelp={() => setShowHelpGuide(true)} 
+        />
         
         <main className="pt-8 pb-12">
           <div className="text-center mb-10">
@@ -74,6 +89,11 @@ export default function Home() {
       <SettingsModal
         open={showSettings}
         onClose={() => setShowSettings(false)}
+      />
+
+      <HelpGuideModal
+        open={showHelpGuide}
+        onClose={() => setShowHelpGuide(false)}
       />
     </div>
   );

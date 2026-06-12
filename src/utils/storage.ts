@@ -7,6 +7,7 @@ const STORAGE_KEYS = {
   FAVORITES: 'word_puzzle_favorites',
   ACHIEVEMENTS: 'word_puzzle_achievements',
   SETTINGS: 'word_puzzle_settings',
+  GUIDE_SHOWN: 'word_puzzle_guide_shown',
 };
 
 export function getGameRecords(): GameRecord[] {
@@ -170,5 +171,21 @@ export function saveSettings(settings: AppSettings): void {
     localStorage.setItem(STORAGE_KEYS.SETTINGS, JSON.stringify(settings));
   } catch {
     console.error('Failed to save settings');
+  }
+}
+
+export function hasShownGuide(): boolean {
+  try {
+    return localStorage.getItem(STORAGE_KEYS.GUIDE_SHOWN) === 'true';
+  } catch {
+    return false;
+  }
+}
+
+export function markGuideAsShown(): void {
+  try {
+    localStorage.setItem(STORAGE_KEYS.GUIDE_SHOWN, 'true');
+  } catch {
+    console.error('Failed to mark guide as shown');
   }
 }
