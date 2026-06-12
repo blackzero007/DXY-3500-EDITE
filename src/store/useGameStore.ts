@@ -93,7 +93,7 @@ export const useGameStore = create<GameStore>((set, get) => ({
     const config = getGameModeConfig(mode);
     const word = getWordForMode(mode);
     const today = getTodayString();
-    const todayRecord = getTodayRecord(today);
+    const todayRecord = getTodayRecord(today, mode);
     const lastDate = getLastPlayDate();
     const streak = getStreak();
 

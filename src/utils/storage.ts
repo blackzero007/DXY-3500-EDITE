@@ -1,4 +1,4 @@
-import type { GameRecord, FavoriteWord, AchievementProgress } from '../types';
+import type { GameRecord, FavoriteWord, AchievementProgress, GameMode } from '../types';
 
 const STORAGE_KEYS = {
   GAME_RECORDS: 'word_puzzle_records',
@@ -20,7 +20,9 @@ export function getGameRecords(): GameRecord[] {
 export function saveGameRecord(record: GameRecord): void {
   try {
     const records = getGameRecords();
-    const existingIndex = records.findIndex(r => r.date === record.date);
+    const existingIndex = records.findIndex(r => 
+      r.date === record.date && (r.mode || 'classic') === (record.mode || 'classic')
+    );
     if (existingIndex >= 0) {
       records[existingIndex] = record;
     } else {
@@ -65,9 +67,11 @@ export function saveLastPlayDate(date: string): void {
   }
 }
 
-export function getTodayRecord(date: string): GameRecord | null {
+export function getTodayRecord(date: string, mode: GameMode = 'classic'): GameRecord | null {
   const records = getGameRecords();
-  return records.find(r => r.date === date) || null;
+  return records.find(r => 
+    r.date === date && (r.mode || 'classic') === mode
+  ) || null;
 }
 
 export function getFavorites(): FavoriteWord[] {
