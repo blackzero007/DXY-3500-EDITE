@@ -161,14 +161,14 @@ export function LetterCard({
         removable ? 'cursor-pointer group' : 'cursor-grab active:cursor-grabbing',
         'select-none touch-none',
         'transition-all duration-200',
-        removable ? 'hover:ring-2 hover:ring-red-400 hover:ring-offset-2 hover:scale-95 hover:opacity-90' : 'hover:scale-105 hover:shadow-xl',
+        removable ? 'hover:ring-2 hover:ring-red-400 hover:ring-offset-2 dark:hover:ring-offset-slate-800 hover:scale-95 hover:opacity-90' : 'hover:scale-105 hover:shadow-xl',
         'active:scale-95',
-        'focus:outline-none focus:ring-4 focus:ring-blue-400 focus:ring-offset-2 focus:scale-105',
+        'focus:outline-none focus:ring-4 focus:ring-blue-400 focus:ring-offset-2 dark:focus:ring-offset-slate-800 focus:scale-105',
         gradient,
         isDragging && 'opacity-50 scale-110',
         isTouchDragging && 'opacity-70 scale-110 z-50',
         disabled && 'cursor-default opacity-60',
-        isHinted && 'ring-2 ring-yellow-300 ring-offset-2'
+        isHinted && 'ring-2 ring-yellow-300 ring-offset-2 dark:ring-offset-slate-800'
       )}
     >
       <span className="relative">

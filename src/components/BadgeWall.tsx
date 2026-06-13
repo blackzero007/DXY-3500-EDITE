@@ -31,15 +31,15 @@ export function BadgeWall() {
     <div className="w-full max-w-lg mx-auto px-4 mb-8">
       <button
         onClick={handleExpand}
-        className="w-full bg-white/80 backdrop-blur-sm rounded-2xl shadow-md hover:shadow-lg transition-all p-4 flex items-center justify-between"
+        className="w-full bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm rounded-2xl shadow-md hover:shadow-lg transition-all p-4 flex items-center justify-between"
       >
         <div className="flex items-center gap-3">
           <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-purple-400 to-purple-600 flex items-center justify-center shadow-lg">
             <Award className="w-5 h-5 text-white" />
           </div>
           <div className="text-left">
-            <h3 className="text-base font-bold text-gray-800">成就徽章</h3>
-            <p className="text-xs text-gray-500">
+            <h3 className="text-base font-bold text-gray-800 dark:text-gray-100">成就徽章</h3>
+            <p className="text-xs text-gray-500 dark:text-gray-400">
               已解锁 {unlockedCount}/{ACHIEVEMENTS.length}
             </p>
           </div>
@@ -70,9 +70,9 @@ export function BadgeWall() {
           expanded ? 'max-h-[800px] opacity-100 mt-3' : 'max-h-0 opacity-0'
         )}
       >
-        <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-md p-5">
+        <div className="bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm rounded-2xl shadow-md p-5">
           <div className="flex items-center gap-2 mb-4">
-            <div className="flex-1 h-2 bg-gray-100 rounded-full overflow-hidden">
+            <div className="flex-1 h-2 bg-gray-100 dark:bg-slate-700 rounded-full overflow-hidden">
               <div
                 className="h-full bg-gradient-to-r from-purple-400 to-purple-600 rounded-full transition-all duration-700"
                 style={{ width: `${(unlockedCount / ACHIEVEMENTS.length) * 100}%` }}
@@ -97,8 +97,8 @@ export function BadgeWall() {
                   className={cn(
                     'flex flex-col items-center gap-1.5 p-3 rounded-xl transition-all duration-300 relative',
                     isUnlocked
-                      ? 'bg-gradient-to-b from-purple-50 to-white border border-purple-200 hover:shadow-md'
-                      : 'bg-gray-50 border border-gray-100 opacity-60 hover:opacity-80',
+                      ? 'bg-gradient-to-b from-purple-50 to-white dark:from-purple-950 dark:to-slate-800 border border-purple-200 dark:border-purple-800 hover:shadow-md'
+                      : 'bg-gray-50 dark:bg-slate-700 border border-gray-100 dark:border-slate-600 opacity-60 hover:opacity-80',
                     selectedId === achievement.id && 'ring-2 ring-purple-400',
                     isNew && 'animate-bounce'
                   )}
@@ -117,15 +117,15 @@ export function BadgeWall() {
                   <span
                     className={cn(
                       'text-[10px] font-semibold text-center leading-tight',
-                      isUnlocked ? 'text-purple-700' : 'text-gray-400'
+                      isUnlocked ? 'text-purple-700 dark:text-purple-300' : 'text-gray-400 dark:text-gray-500'
                     )}
                   >
                     {achievement.name}
                   </span>
                   {!isUnlocked && (
-                    <div className="w-full h-1 bg-gray-200 rounded-full overflow-hidden">
+                    <div className="w-full h-1 bg-gray-200 dark:bg-slate-600 rounded-full overflow-hidden">
                       <div
-                        className="h-full bg-gray-400 rounded-full transition-all duration-500"
+                        className="h-full bg-gray-400 dark:bg-gray-500 rounded-full transition-all duration-500"
                         style={{ width: `${percent}%` }}
                       />
                     </div>
@@ -139,34 +139,34 @@ export function BadgeWall() {
           </div>
 
           {selectedAchievement && selectedProgress && (
-            <div className="mt-4 p-4 bg-gradient-to-r from-purple-50 to-indigo-50 rounded-xl border border-purple-100">
+            <div className="mt-4 p-4 bg-gradient-to-r from-purple-50 to-indigo-50 dark:from-purple-950 dark:to-indigo-950 rounded-xl border border-purple-100 dark:border-purple-900">
               <div className="flex items-center gap-3">
                 <span className="text-3xl">{selectedAchievement.icon}</span>
                 <div className="flex-1">
                   <div className="flex items-center gap-2">
-                    <h4 className="font-bold text-gray-800">{selectedAchievement.name}</h4>
+                    <h4 className="font-bold text-gray-800 dark:text-gray-100">{selectedAchievement.name}</h4>
                     {selectedProgress.unlockedAt !== null && (
                       <span className="px-1.5 py-0.5 bg-purple-500 text-white text-[10px] rounded-full font-medium">
                         已解锁
                       </span>
                     )}
                   </div>
-                  <p className="text-xs text-gray-500 mt-0.5">{selectedAchievement.description}</p>
+                  <p className="text-xs text-gray-500 dark:text-gray-400 mt-0.5">{selectedAchievement.description}</p>
                   <div className="flex items-center gap-2 mt-2">
-                    <div className="flex-1 h-2 bg-white rounded-full overflow-hidden">
+                    <div className="flex-1 h-2 bg-white dark:bg-slate-700 rounded-full overflow-hidden">
                       <div
                         className={cn(
                           'h-full rounded-full transition-all duration-700',
                           selectedProgress.unlockedAt !== null
                             ? 'bg-gradient-to-r from-purple-400 to-purple-600'
-                            : 'bg-gray-400'
+                            : 'bg-gray-400 dark:bg-gray-500'
                         )}
                         style={{
                           width: `${Math.min(100, Math.round((selectedProgress.current / selectedAchievement.target) * 100))}%`,
                         }}
                       />
                     </div>
-                    <span className="text-xs font-semibold text-gray-600">
+                    <span className="text-xs font-semibold text-gray-600 dark:text-gray-300">
                       {selectedProgress.current}/{selectedAchievement.target}
                     </span>
                   </div>

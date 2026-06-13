@@ -201,7 +201,7 @@ export function GameBoard() {
   if (gameStatus === 'idle') {
     return (
       <div className="w-full max-w-md mx-auto px-4 text-center">
-        <div className="bg-white rounded-3xl shadow-xl p-8">
+        <div className="bg-white dark:bg-slate-800 rounded-3xl shadow-xl p-8 transition-colors duration-300">
           <div className={cn(
             'w-20 h-20 mx-auto mb-6 rounded-2xl flex items-center justify-center shadow-lg',
             'bg-gradient-to-br',
@@ -210,23 +210,23 @@ export function GameBoard() {
             <span className="text-3xl">{config.icon}</span>
           </div>
           
-          <h3 className="text-2xl font-bold text-gray-800 mb-2">准备好了吗？</h3>
-          <p className="text-gray-500 mb-6">
+          <h3 className="text-2xl font-bold text-gray-800 dark:text-gray-100 mb-2">准备好了吗？</h3>
+          <p className="text-gray-500 dark:text-gray-400 mb-6">
             {config.timeLimit !== null 
               ? `你有 ${config.timeLimit} 秒时间，通过拖拽字母拼出正确的单词`
               : '不限时间，通过拖拽字母拼出正确的单词'}
           </p>
           
           <div className={cn(
-            'rounded-xl p-4 mb-6 border',
-            gameMode === 'classic' && 'bg-orange-50 border-orange-100',
-            gameMode === 'practice' && 'bg-blue-50 border-blue-100',
-            gameMode === 'challenge' && 'bg-red-50 border-red-100'
+            'rounded-xl p-4 mb-6 border transition-colors duration-300',
+            gameMode === 'classic' && 'bg-orange-50 border-orange-100 dark:bg-orange-950 dark:border-orange-900',
+            gameMode === 'practice' && 'bg-blue-50 border-blue-100 dark:bg-blue-950 dark:border-blue-900',
+            gameMode === 'challenge' && 'bg-red-50 border-red-100 dark:bg-red-950 dark:border-red-900'
           )}>
             <p className={cn('text-sm mb-3',
-              gameMode === 'classic' && 'text-orange-700',
-              gameMode === 'practice' && 'text-blue-700',
-              gameMode === 'challenge' && 'text-red-700'
+              gameMode === 'classic' && 'text-orange-700 dark:text-orange-300',
+              gameMode === 'practice' && 'text-blue-700 dark:text-blue-300',
+              gameMode === 'challenge' && 'text-red-700 dark:text-red-300'
             )}>
               <span className="font-semibold">单词长度：</span>
               {currentWord.word.length} 个字母
@@ -238,11 +238,11 @@ export function GameBoard() {
                   className={cn(
                     'flex items-center gap-1.5 px-3 py-1.5 rounded-full transition-all',
                     isSpeaking
-                      ? 'bg-teal-200 text-teal-800'
-                      : cn('bg-white text-gray-600 hover:bg-teal-50 hover:text-teal-600 border',
-                          gameMode === 'classic' && 'border-orange-200',
-                          gameMode === 'practice' && 'border-blue-200',
-                          gameMode === 'challenge' && 'border-red-200'
+                      ? 'bg-teal-200 text-teal-800 dark:bg-teal-800 dark:text-teal-200'
+                      : cn('bg-white dark:bg-slate-700 text-gray-600 dark:text-gray-300 hover:bg-teal-50 dark:hover:bg-slate-600 hover:text-teal-600 dark:hover:text-teal-400 border',
+                          gameMode === 'classic' && 'border-orange-200 dark:border-orange-800',
+                          gameMode === 'practice' && 'border-blue-200 dark:border-blue-800',
+                          gameMode === 'challenge' && 'border-red-200 dark:border-red-800'
                         )
                   )}
                   title="播放发音"
@@ -252,7 +252,7 @@ export function GameBoard() {
                     {isSpeaking ? '播放中...' : '听发音'}
                   </span>
                 </button>
-                <div className="flex items-center bg-white rounded-full p-0.5 border border-gray-200">
+                <div className="flex items-center bg-white dark:bg-slate-700 rounded-full p-0.5 border border-gray-200 dark:border-slate-600">
                   <button
                     onClick={() => setSpeechRate('normal')}
                     className={cn(
@@ -263,7 +263,7 @@ export function GameBoard() {
                             gameMode === 'practice' && 'bg-blue-400',
                             gameMode === 'challenge' && 'bg-red-400'
                           )
-                        : 'text-gray-500 hover:text-gray-700'
+                        : 'text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200'
                     )}
                   >
                     正常
@@ -278,7 +278,7 @@ export function GameBoard() {
                             gameMode === 'practice' && 'bg-blue-400',
                             gameMode === 'challenge' && 'bg-red-400'
                           )
-                        : 'text-gray-500 hover:text-gray-700'
+                        : 'text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200'
                     )}
                   >
                     慢速
@@ -314,8 +314,8 @@ export function GameBoard() {
 
       <div className="text-center mb-6">
         <div className="flex items-center justify-center gap-2 mb-2">
-          <span className="text-sm text-gray-500">单词长度</span>
-          <span className="px-2 py-0.5 bg-teal-100 text-teal-700 rounded-full text-sm font-medium">
+          <span className="text-sm text-gray-500 dark:text-gray-400">单词长度</span>
+          <span className="px-2 py-0.5 bg-teal-100 dark:bg-teal-900 text-teal-700 dark:text-teal-300 rounded-full text-sm font-medium">
             {currentWord.word.length} 个字母
           </span>
         </div>
@@ -327,8 +327,8 @@ export function GameBoard() {
               className={cn(
                 'flex items-center gap-1.5 px-3 py-1.5 rounded-full transition-all',
                 isSpeaking
-                  ? 'bg-teal-100 text-teal-700'
-                  : 'bg-gray-100 text-gray-600 hover:bg-teal-50 hover:text-teal-600'
+                  ? 'bg-teal-100 text-teal-700 dark:bg-teal-900 dark:text-teal-300'
+                  : 'bg-gray-100 dark:bg-slate-700 text-gray-600 dark:text-gray-300 hover:bg-teal-50 dark:hover:bg-slate-600 hover:text-teal-600 dark:hover:text-teal-400'
               )}
               title="播放发音"
             >
@@ -338,14 +338,14 @@ export function GameBoard() {
               </span>
             </button>
 
-            <div className="flex items-center bg-gray-100 rounded-full p-0.5">
+            <div className="flex items-center bg-gray-100 dark:bg-slate-700 rounded-full p-0.5">
               <button
                 onClick={() => setSpeechRate('normal')}
                 className={cn(
                   'px-3 py-1 rounded-full text-xs font-medium transition-all',
                   speechRate === 'normal'
-                    ? 'bg-white text-teal-700 shadow-sm'
-                    : 'text-gray-500 hover:text-gray-700'
+                    ? 'bg-white dark:bg-slate-600 text-teal-700 dark:text-teal-300 shadow-sm'
+                    : 'text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200'
                 )}
               >
                 正常
@@ -355,8 +355,8 @@ export function GameBoard() {
                 className={cn(
                   'px-3 py-1 rounded-full text-xs font-medium transition-all',
                   speechRate === 'slow'
-                    ? 'bg-white text-teal-700 shadow-sm'
-                    : 'text-gray-500 hover:text-gray-700'
+                    ? 'bg-white dark:bg-slate-600 text-teal-700 dark:text-teal-300 shadow-sm'
+                    : 'text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200'
                 )}
               >
                 慢速
@@ -368,7 +368,7 @@ export function GameBoard() {
         <div className="flex items-center justify-center gap-2">
           <button
             onClick={() => setShowMeaning(!showMeaning)}
-            className="flex items-center gap-1 text-sm text-gray-400 hover:text-gray-600 transition-colors"
+            className="flex items-center gap-1 text-sm text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300 transition-colors"
           >
             <HelpCircle className="w-4 h-4" />
             <span>{showMeaning ? '隐藏释义' : '显示提示'}</span>
@@ -376,7 +376,7 @@ export function GameBoard() {
         </div>
 
         {showMeaning && (
-          <p className="mt-2 text-gray-600 text-sm animate-fade-in">
+          <p className="mt-2 text-gray-600 dark:text-gray-300 text-sm animate-fade-in">
             💡 {currentWord.meaning}
           </p>
         )}
@@ -392,8 +392,8 @@ export function GameBoard() {
             data-answer-slot
             className={cn(
               'flex justify-center gap-2 sm:gap-3 mb-8 p-4',
-              'bg-gray-50 rounded-2xl border-2 border-dashed border-gray-200',
-              'min-h-24 sm:min-h-28 items-center',
+              'bg-gray-50 dark:bg-slate-800/50 rounded-2xl border-2 border-dashed border-gray-200 dark:border-slate-600',
+              'min-h-24 sm:min-h-28 items-center transition-colors duration-300',
               shakeAnswer && 'animate-shake'
             )}
           >
@@ -408,7 +408,7 @@ export function GameBoard() {
                   'w-12 h-12 sm:w-14 sm:h-14 md:w-16 md:h-16',
                   'flex items-center justify-center',
                   'rounded-xl transition-all duration-200',
-                  letter ? '' : 'bg-white border-2 border-dashed border-gray-300'
+                  letter ? '' : 'bg-white dark:bg-slate-700 border-2 border-dashed border-gray-300 dark:border-slate-500'
                 )}
               >
                 {letter ? (
@@ -421,7 +421,7 @@ export function GameBoard() {
                     removable={!isGameOver && gameStatus !== 'paused'}
                   />
                 ) : (
-                  <span className="text-gray-300 text-xs">{index + 1}</span>
+                  <span className="text-gray-300 dark:text-slate-500 text-xs">{index + 1}</span>
                 )}
               </div>
             ))}
@@ -432,11 +432,11 @@ export function GameBoard() {
             disabled={isGameOver || answerLetters.every((l) => l === null) || gameStatus === 'paused'}
             className={cn(
               'absolute top-2 right-2 flex items-center gap-1.5 px-3 py-1.5',
-              'bg-white rounded-lg text-sm font-medium shadow-sm',
-              'border border-gray-200',
-              'text-gray-500 hover:text-red-600 hover:bg-red-50 hover:border-red-200',
+              'bg-white dark:bg-slate-700 rounded-lg text-sm font-medium shadow-sm',
+              'border border-gray-200 dark:border-slate-600',
+              'text-gray-500 dark:text-gray-400 hover:text-red-600 dark:hover:text-red-400 hover:bg-red-50 dark:hover:bg-red-950 hover:border-red-200 dark:hover:border-red-800',
               'transition-all duration-200',
-              'disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:bg-white disabled:hover:text-gray-500 disabled:hover:border-gray-200'
+              'disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:bg-white dark:disabled:hover:bg-slate-700 disabled:hover:text-gray-500 dark:disabled:hover:text-gray-400 disabled:hover:border-gray-200 dark:disabled:hover:border-slate-600'
             )}
             title="清空所有已放置的字母"
           >
@@ -445,7 +445,7 @@ export function GameBoard() {
           </button>
 
           {gameStatus === 'paused' && (
-            <div className="absolute inset-0 bg-white/80 backdrop-blur-sm rounded-2xl flex items-center justify-center z-10">
+            <div className="absolute inset-0 bg-white/80 dark:bg-slate-900/80 backdrop-blur-sm rounded-2xl flex items-center justify-center z-10">
               <div className="text-center">
                 <Pause className="w-10 h-10 text-gray-400 mx-auto mb-2" />
                 <p className="text-gray-500 font-medium">游戏已暂停</p>
@@ -463,7 +463,7 @@ export function GameBoard() {
         <div
           ref={poolRef}
           data-pool-slot
-          className="flex flex-wrap justify-center gap-2 sm:gap-3 p-4 bg-white rounded-2xl shadow-inner mb-6 min-h-24 sm:min-h-28"
+          className="flex flex-wrap justify-center gap-2 sm:gap-3 p-4 bg-white dark:bg-slate-800 rounded-2xl shadow-inner dark:shadow-slate-950 mb-6 min-h-24 sm:min-h-28 transition-colors duration-300"
           onDragOver={handleDragOver}
           onDrop={(e) => handleDrop(e, 0, 'pool')}
         >
@@ -485,7 +485,7 @@ export function GameBoard() {
         </div>
 
         {gameStatus === 'paused' && (
-          <div className="absolute inset-0 bg-white/80 backdrop-blur-sm rounded-2xl flex items-center justify-center z-10">
+          <div className="absolute inset-0 bg-white/80 dark:bg-slate-900/80 backdrop-blur-sm rounded-2xl flex items-center justify-center z-10">
             <div className="text-center">
               <Pause className="w-8 h-8 text-gray-400 mx-auto mb-1" />
               <p className="text-gray-400 text-sm">已隐藏</p>
@@ -498,7 +498,7 @@ export function GameBoard() {
         <button
           onClick={resetAnswer}
           disabled={isGameOver || gameStatus === 'paused'}
-          className="flex items-center gap-2 px-4 py-3 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-xl font-medium transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+          className="flex items-center gap-2 px-4 py-3 bg-gray-100 dark:bg-slate-700 hover:bg-gray-200 dark:hover:bg-slate-600 text-gray-700 dark:text-gray-200 rounded-xl font-medium transition-all disabled:opacity-50 disabled:cursor-not-allowed"
         >
           <RotateCcw className="w-4 h-4" />
           <span className="hidden sm:inline">重置</span>
@@ -508,23 +508,23 @@ export function GameBoard() {
           <button
             onClick={handleHint}
             disabled={isGameOver || gameStatus === 'paused'}
-            className="flex items-center gap-2 px-4 py-3 bg-amber-100 hover:bg-amber-200 text-amber-700 rounded-xl font-medium transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+            className="flex items-center gap-2 px-4 py-3 bg-amber-100 dark:bg-amber-900 hover:bg-amber-200 dark:hover:bg-amber-800 text-amber-700 dark:text-amber-300 rounded-xl font-medium transition-all disabled:opacity-50 disabled:cursor-not-allowed"
           >
             <Lightbulb className="w-4 h-4" />
             <span>提示</span>
-            <span className="bg-amber-200 px-2 py-0.5 rounded-full text-xs">
+            <span className="bg-amber-200 dark:bg-amber-800 px-2 py-0.5 rounded-full text-xs">
               {hintsUsed}
             </span>
           </button>
         ) : (
           <button
             disabled
-            className="flex items-center gap-2 px-4 py-3 bg-gray-100 text-gray-400 rounded-xl font-medium cursor-not-allowed"
+            className="flex items-center gap-2 px-4 py-3 bg-gray-100 dark:bg-slate-700 text-gray-400 dark:text-slate-500 rounded-xl font-medium cursor-not-allowed"
             title="挑战模式禁止使用提示"
           >
             <Lightbulb className="w-4 h-4" />
             <span>提示</span>
-            <span className="bg-gray-200 px-2 py-0.5 rounded-full text-xs">
+            <span className="bg-gray-200 dark:bg-slate-600 px-2 py-0.5 rounded-full text-xs">
               禁用
             </span>
           </button>
@@ -534,7 +534,7 @@ export function GameBoard() {
           <button
             onClick={handleRevealAnswer}
             disabled={isGameOver || gameStatus === 'paused'}
-            className="flex items-center gap-2 px-4 py-3 bg-green-100 hover:bg-green-200 text-green-700 rounded-xl font-medium transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+            className="flex items-center gap-2 px-4 py-3 bg-green-100 dark:bg-green-900 hover:bg-green-200 dark:hover:bg-green-800 text-green-700 dark:text-green-300 rounded-xl font-medium transition-all disabled:opacity-50 disabled:cursor-not-allowed"
           >
             <Eye className="w-4 h-4" />
             <span>看答案</span>
@@ -551,7 +551,7 @@ export function GameBoard() {
                   'bg-gradient-to-r hover:brightness-110',
                   config.bgGradient
                 )
-              : 'bg-gray-200 text-gray-400 cursor-not-allowed'
+              : 'bg-gray-200 dark:bg-slate-700 text-gray-400 dark:text-slate-500 cursor-not-allowed'
           )}
         >
           <Send className="w-4 h-4" />

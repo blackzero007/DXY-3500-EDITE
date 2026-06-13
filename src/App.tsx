@@ -5,9 +5,16 @@ import Favorites from "@/pages/Favorites";
 import History from "@/pages/History";
 import Leaderboard from "@/pages/Leaderboard";
 import { useDailyReminder } from "@/hooks/useDailyReminder";
+import { useSettingsStore } from "@/store/useSettingsStore";
+import { useEffect } from "react";
 
 export default function App() {
   useDailyReminder();
+  const initSettings = useSettingsStore((s) => s.initSettings);
+
+  useEffect(() => {
+    initSettings();
+  }, [initSettings]);
   return (
     <Router>
       <Routes>

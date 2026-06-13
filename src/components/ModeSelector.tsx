@@ -36,9 +36,9 @@ export function ModeSelector({ onSelectMode }: ModeSelectorProps) {
           'group relative w-full p-6 rounded-2xl border-2 transition-all duration-300',
           'hover:scale-105 hover:shadow-xl',
           'text-left',
-          config.id === 'classic' && 'border-teal-200 bg-gradient-to-br from-teal-50 to-emerald-50 hover:border-teal-400',
-          config.id === 'practice' && 'border-blue-200 bg-gradient-to-br from-blue-50 to-indigo-50 hover:border-blue-400',
-          config.id === 'challenge' && 'border-orange-200 bg-gradient-to-br from-orange-50 to-red-50 hover:border-orange-400'
+          config.id === 'classic' && 'border-teal-200 bg-gradient-to-br from-teal-50 to-emerald-50 hover:border-teal-400 dark:border-teal-800 dark:from-teal-950 dark:to-emerald-950 dark:hover:border-teal-600',
+          config.id === 'practice' && 'border-blue-200 bg-gradient-to-br from-blue-50 to-indigo-50 hover:border-blue-400 dark:border-blue-800 dark:from-blue-950 dark:to-indigo-950 dark:hover:border-blue-600',
+          config.id === 'challenge' && 'border-orange-200 bg-gradient-to-br from-orange-50 to-red-50 hover:border-orange-400 dark:border-orange-800 dark:from-orange-950 dark:to-red-950 dark:hover:border-orange-600'
         )}
       >
         <div className="flex items-start gap-4">
@@ -53,7 +53,7 @@ export function ModeSelector({ onSelectMode }: ModeSelectorProps) {
           </div>
 
           <div className="flex-1">
-            <h3 className="text-xl font-bold text-gray-800 mb-1 flex items-center gap-2">
+            <h3 className="text-xl font-bold text-gray-800 dark:text-gray-100 mb-1 flex items-center gap-2">
               {config.name}
               <Icon
                 className={cn(
@@ -64,16 +64,16 @@ export function ModeSelector({ onSelectMode }: ModeSelectorProps) {
                 )}
               />
             </h3>
-            <p className="text-gray-600 text-sm mb-3">{config.description}</p>
+            <p className="text-gray-600 dark:text-gray-300 text-sm mb-3">{config.description}</p>
 
             <div className="flex flex-wrap gap-2">
               {config.timeLimit !== null && (
                 <span
                   className={cn(
                     'inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-medium',
-                    config.id === 'classic' && 'bg-teal-100 text-teal-700',
-                    config.id === 'practice' && 'bg-blue-100 text-blue-700',
-                    config.id === 'challenge' && 'bg-orange-100 text-orange-700'
+                    config.id === 'classic' && 'bg-teal-100 text-teal-700 dark:bg-teal-900 dark:text-teal-300',
+                    config.id === 'practice' && 'bg-blue-100 text-blue-700 dark:bg-blue-900 dark:text-blue-300',
+                    config.id === 'challenge' && 'bg-orange-100 text-orange-700 dark:bg-orange-900 dark:text-orange-300'
                   )}
                 >
                   <Clock className="w-3 h-3" />
@@ -84,7 +84,7 @@ export function ModeSelector({ onSelectMode }: ModeSelectorProps) {
                 <span
                   className={cn(
                     'inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-medium',
-                    'bg-gray-100 text-gray-700'
+                    'bg-gray-100 text-gray-700 dark:bg-slate-700 dark:text-gray-300'
                   )}
                 >
                   <Clock className="w-3 h-3" />
@@ -95,8 +95,8 @@ export function ModeSelector({ onSelectMode }: ModeSelectorProps) {
                 <span
                   className={cn(
                     'inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-medium',
-                    config.id === 'classic' && 'bg-amber-100 text-amber-700',
-                    config.id === 'practice' && 'bg-amber-100 text-amber-700'
+                    config.id === 'classic' && 'bg-amber-100 text-amber-700 dark:bg-amber-900 dark:text-amber-300',
+                    config.id === 'practice' && 'bg-amber-100 text-amber-700 dark:bg-amber-900 dark:text-amber-300'
                   )}
                 >
                   <Lightbulb className="w-3 h-3" />
@@ -107,7 +107,7 @@ export function ModeSelector({ onSelectMode }: ModeSelectorProps) {
                 <span
                   className={cn(
                     'inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-medium',
-                    'bg-red-100 text-red-700'
+                    'bg-red-100 text-red-700 dark:bg-red-900 dark:text-red-300'
                   )}
                 >
                   <Lightbulb className="w-3 h-3" />
@@ -118,7 +118,7 @@ export function ModeSelector({ onSelectMode }: ModeSelectorProps) {
                 <span
                   className={cn(
                     'inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-medium',
-                    'bg-green-100 text-green-700'
+                    'bg-green-100 text-green-700 dark:bg-green-900 dark:text-green-300'
                   )}
                 >
                   <Eye className="w-3 h-3" />
@@ -143,10 +143,10 @@ export function ModeSelector({ onSelectMode }: ModeSelectorProps) {
   return (
     <div className="w-full max-w-2xl mx-auto px-4">
       <div className="text-center mb-8">
-        <h2 className="text-3xl font-bold text-gray-800 mb-3">
+        <h2 className="text-3xl font-bold text-gray-800 dark:text-gray-100 mb-3">
           选择游戏模式
         </h2>
-        <p className="text-gray-500">
+        <p className="text-gray-500 dark:text-gray-400">
           根据你的需求，选择最适合的学习方式
         </p>
       </div>
@@ -155,9 +155,9 @@ export function ModeSelector({ onSelectMode }: ModeSelectorProps) {
         {Object.values(GAME_MODES).map(renderModeCard)}
       </div>
 
-      <div className="mt-8 p-4 bg-gray-50 rounded-xl border border-gray-100">
-        <h4 className="text-sm font-semibold text-gray-700 mb-2">💡 模式说明</h4>
-        <ul className="text-xs text-gray-500 space-y-1">
+      <div className="mt-8 p-4 bg-gray-50 dark:bg-slate-800 rounded-xl border border-gray-100 dark:border-slate-700 transition-colors duration-300">
+        <h4 className="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">💡 模式说明</h4>
+        <ul className="text-xs text-gray-500 dark:text-gray-400 space-y-1">
           <li>• <strong>经典模式</strong>：每天一个固定单词，60秒限时挑战，记录连续打卡天数</li>
           <li>• <strong>练习模式</strong>：随机单词，无时间限制，可随时查看答案，轻松学习</li>
           <li>• <strong>挑战模式</strong>：30秒限时，禁止使用提示，考验你的真实词汇水平</li>

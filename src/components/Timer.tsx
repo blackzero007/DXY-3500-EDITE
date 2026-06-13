@@ -68,9 +68,9 @@ export function Timer() {
               strokeWidth="4"
               fill="none"
               className={cn(
-                'text-gray-200 transition-colors',
-                isWarning && 'text-orange-200',
-                isCritical && 'text-red-200',
+                'text-gray-200 dark:text-slate-600 transition-colors',
+                isWarning && 'text-orange-200 dark:text-orange-900',
+                isCritical && 'text-red-200 dark:text-red-900',
                 isPaused && 'text-gray-200'
               )}
             />
@@ -100,7 +100,7 @@ export function Timer() {
                 isWarning && 'text-orange-500',
                 isCritical && 'text-red-500',
                 !isWarning && !isCritical && gameMode === 'challenge' && 'text-orange-600',
-                !isWarning && !isCritical && gameMode !== 'challenge' && 'text-gray-700',
+                !isWarning && !isCritical && gameMode !== 'challenge' && 'text-gray-700 dark:text-gray-200',
                 isPaused && 'text-gray-400'
               )}
             >
@@ -116,7 +116,7 @@ export function Timer() {
               'w-10 h-10 rounded-full flex items-center justify-center transition-all shadow-md hover:shadow-lg',
               isPaused
                 ? 'bg-teal-500 text-white hover:bg-teal-600'
-                : 'bg-white text-gray-600 hover:bg-gray-100 border border-gray-200'
+                : 'bg-white dark:bg-slate-700 text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-slate-600 border border-gray-200 dark:border-slate-600'
             )}
             title={isPaused ? '继续游戏' : '暂停游戏'}
           >
@@ -128,7 +128,7 @@ export function Timer() {
           </button>
         )}
       </div>
-      <div className="flex items-center gap-1 text-xs text-gray-500">
+      <div className="flex items-center gap-1 text-xs text-gray-500 dark:text-gray-400">
         <Clock className="w-3 h-3" />
         <span>{isPaused ? '已暂停' : '秒'}</span>
       </div>

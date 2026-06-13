@@ -209,7 +209,7 @@ export function ResultModal() {
 
       <div
         className={cn(
-          'relative w-full max-w-md bg-white rounded-3xl shadow-2xl overflow-hidden',
+          'relative w-full max-w-md bg-white dark:bg-slate-800 rounded-3xl shadow-2xl overflow-hidden',
           'transform transition-all duration-500 ease-out',
           show ? 'scale-100 translate-y-0' : 'scale-95 translate-y-8'
         )}
@@ -238,12 +238,12 @@ export function ResultModal() {
         <div className="p-6">
           <div className="text-center mb-6">
             <div className="flex items-center justify-center gap-2">
-              <h2 className="text-3xl font-bold text-gray-800 tracking-wide">
+              <h2 className="text-3xl font-bold text-gray-800 dark:text-gray-100 tracking-wide">
                 {currentWord?.word.toUpperCase()}
               </h2>
               <button
                 onClick={() => currentWord && toggleFavorite(currentWord)}
-                className="p-2 hover:bg-amber-50 rounded-full transition-colors group"
+                className="p-2 hover:bg-amber-50 dark:hover:bg-amber-900 rounded-full transition-colors group"
                 title={isFavorited ? '取消收藏' : '收藏单词'}
               >
                 <Star
@@ -251,13 +251,13 @@ export function ResultModal() {
                     'w-6 h-6 transition-all',
                     isFavorited
                       ? 'fill-amber-400 text-amber-400'
-                      : 'text-gray-300 group-hover:text-amber-400'
+                      : 'text-gray-300 dark:text-slate-600 group-hover:text-amber-400'
                   )}
                 />
               </button>
             </div>
             {currentWord?.phonetic && (
-              <div className="flex items-center justify-center gap-2 text-gray-500 mt-1">
+              <div className="flex items-center justify-center gap-2 text-gray-500 dark:text-gray-400 mt-1">
                 <span className="text-sm">{currentWord.phonetic}</span>
               </div>
             )}
@@ -268,8 +268,8 @@ export function ResultModal() {
                   className={cn(
                     'flex items-center gap-1.5 px-3 py-1.5 rounded-full transition-all',
                     isSpeaking
-                      ? 'bg-teal-100 text-teal-700'
-                      : 'bg-gray-100 text-gray-600 hover:bg-teal-50 hover:text-teal-600'
+                      ? 'bg-teal-100 text-teal-700 dark:bg-teal-900 dark:text-teal-300'
+                      : 'bg-gray-100 dark:bg-slate-700 text-gray-600 dark:text-gray-300 hover:bg-teal-50 dark:hover:bg-slate-600 hover:text-teal-600 dark:hover:text-teal-400'
                   )}
                   title="播放发音"
                 >
@@ -278,14 +278,14 @@ export function ResultModal() {
                     {isSpeaking ? '播放中...' : '跟读'}
                   </span>
                 </button>
-                <div className="flex items-center bg-gray-100 rounded-full p-0.5">
+                <div className="flex items-center bg-gray-100 dark:bg-slate-700 rounded-full p-0.5">
                   <button
                     onClick={() => setSpeechRate('normal')}
                     className={cn(
                       'px-2.5 py-1 rounded-full text-xs font-medium transition-all',
                       speechRate === 'normal'
-                        ? 'bg-white text-teal-700 shadow-sm'
-                        : 'text-gray-500 hover:text-gray-700'
+                        ? 'bg-white dark:bg-slate-600 text-teal-700 dark:text-teal-300 shadow-sm'
+                        : 'text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200'
                     )}
                   >
                     正常
@@ -295,8 +295,8 @@ export function ResultModal() {
                     className={cn(
                       'px-2.5 py-1 rounded-full text-xs font-medium transition-all',
                       speechRate === 'slow'
-                        ? 'bg-white text-teal-700 shadow-sm'
-                        : 'text-gray-500 hover:text-gray-700'
+                        ? 'bg-white dark:bg-slate-600 text-teal-700 dark:text-teal-300 shadow-sm'
+                        : 'text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200'
                     )}
                   >
                     慢速
@@ -304,30 +304,30 @@ export function ResultModal() {
                 </div>
               </div>
             )}
-            <p className="text-lg text-gray-600 mt-2">{currentWord?.meaning}</p>
+            <p className="text-lg text-gray-600 dark:text-gray-300 mt-2">{currentWord?.meaning}</p>
           </div>
 
           <div className="grid grid-cols-3 gap-3 mb-6">
-            <div className="bg-gray-50 rounded-xl p-3 text-center">
+            <div className="bg-gray-50 dark:bg-slate-700 rounded-xl p-3 text-center">
               <Clock className="w-5 h-5 text-teal-500 mx-auto mb-1" />
-              <p className="text-xl font-bold text-gray-800">{timeUsed}</p>
-              <p className="text-xs text-gray-500">用时秒</p>
+              <p className="text-xl font-bold text-gray-800 dark:text-gray-100">{timeUsed}</p>
+              <p className="text-xs text-gray-500 dark:text-gray-400">用时秒</p>
             </div>
-            <div className="bg-gray-50 rounded-xl p-3 text-center">
+            <div className="bg-gray-50 dark:bg-slate-700 rounded-xl p-3 text-center">
               <Lightbulb className="w-5 h-5 text-amber-500 mx-auto mb-1" />
-              <p className="text-xl font-bold text-gray-800">{hintsUsed}</p>
-              <p className="text-xs text-gray-500">提示次数</p>
+              <p className="text-xl font-bold text-gray-800 dark:text-gray-100">{hintsUsed}</p>
+              <p className="text-xs text-gray-500 dark:text-gray-400">提示次数</p>
             </div>
-            <div className="bg-gray-50 rounded-xl p-3 text-center">
+            <div className="bg-gray-50 dark:bg-slate-700 rounded-xl p-3 text-center">
               <Trophy className="w-5 h-5 text-orange-500 mx-auto mb-1" />
-              <p className="text-xl font-bold text-gray-800">{streak}</p>
-              <p className="text-xs text-gray-500">连续天数</p>
+              <p className="text-xl font-bold text-gray-800 dark:text-gray-100">{streak}</p>
+              <p className="text-xs text-gray-500 dark:text-gray-400">连续天数</p>
             </div>
           </div>
 
           {currentWord?.example && (
-            <div className="bg-teal-50 rounded-xl p-4 mb-6 border border-teal-100">
-              <p className="text-sm text-teal-700 italic">
+            <div className="bg-teal-50 dark:bg-teal-950 rounded-xl p-4 mb-6 border border-teal-100 dark:border-teal-900">
+              <p className="text-sm text-teal-700 dark:text-teal-300 italic">
                 "{currentWord.example}"
               </p>
             </div>
@@ -336,7 +336,7 @@ export function ResultModal() {
           <div className="flex gap-3 mb-3">
             <button
               onClick={handleShare}
-              className="flex-1 py-3 px-4 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-xl font-medium transition-colors flex items-center justify-center gap-2"
+              className="flex-1 py-3 px-4 bg-gray-100 dark:bg-slate-700 hover:bg-gray-200 dark:hover:bg-slate-600 text-gray-700 dark:text-gray-200 rounded-xl font-medium transition-colors flex items-center justify-center gap-2"
             >
               <Share2 className="w-4 h-4" />
               分享
@@ -403,7 +403,7 @@ export function ResultModal() {
               <X className="w-8 h-8" />
             </button>
 
-            <div className="bg-white rounded-3xl overflow-hidden shadow-2xl">
+            <div className="bg-white dark:bg-slate-800 rounded-3xl overflow-hidden shadow-2xl">
               <div className="p-3 bg-gradient-to-r from-purple-500 to-pink-500">
                 <p className="text-center text-white font-medium">分享海报</p>
               </div>
@@ -416,8 +416,8 @@ export function ResultModal() {
                     className="w-full rounded-xl shadow-lg"
                   />
                 ) : (
-                  <div className="w-full aspect-[9/16] bg-gray-100 rounded-xl flex items-center justify-center">
-                    <Loader2 className="w-10 h-10 text-gray-400 animate-spin" />
+                  <div className="w-full aspect-[9/16] bg-gray-100 dark:bg-slate-700 rounded-xl flex items-center justify-center">
+                    <Loader2 className="w-10 h-10 text-gray-400 dark:text-gray-500 animate-spin" />
                   </div>
                 )}
               </div>
