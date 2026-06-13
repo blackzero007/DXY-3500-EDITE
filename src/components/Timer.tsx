@@ -2,13 +2,21 @@ import { useEffect, useRef } from 'react';
 import { Clock, Pause, Play } from 'lucide-react';
 import { useGameStore } from '../store/useGameStore';
 import { getGameModeConfig } from '../config/gameModes';
+import { getDifficultyConfig } from '../config/difficulty';
 import { cn } from '../lib/utils';
 import { soundManager } from '../utils/soundManager';
 
 export function Timer() {
-  const { timeLeft, gameStatus, gameMode, tick, pauseGame, resumeGame } = useGameStore();
-  const config = getGameModeConfig(gameMode);
-  const totalTime = config.timeLimit || 60;
+  const { timeLeft, gameStatus, gameMode, difficulty, tick, pauseGame, resumeGame } = useGameStore();
+  const modeConfig = getGameModeConfig(gameMode);
+  const diffConfig = getDifficultyConfig(difficulty);
+  
+  let totalTime: number;
+  if (modeConfig.timeLimit === null) {
+    totalTime = 60;
+  } else {
+    totalTime = diffConfig.timeLimit;
+  }
   const lastTickTime = useRef<number>(timeLeft);
 
   useEffect(() => {

@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import type { GameState, GameStatus, Word, GameMode } from '../types';
+import type { GameState, GameStatus, Word, GameMode, Difficulty } from '../types';
 import { wordList } from '../data/words';
 import { seededShuffle, shuffle } from '../utils/shuffle';
 import { getDateSeed, getTodayString, isYesterday } from '../utils/dateUtils';
@@ -13,11 +13,12 @@ import {
 } from '../utils/storage';
 import { useAchievementStore } from './useAchievementStore';
 import { getGameModeConfig } from '../config/gameModes';
+import { getDifficultyConfig } from '../config/difficulty';
 
 const DEFAULT_GAME_TIME = 60;
 
 interface GameStore extends GameState {
-  initGame: (mode?: GameMode) => void;
+  initGame: (mode?: GameMode, difficulty?: Difficulty) => void;
   startGame: () => void;
   pauseGame: () => void;
   resumeGame: () => void;
@@ -30,6 +31,7 @@ interface GameStore extends GameState {
   setGameStatus: (status: GameStatus) => void;
   retryGame: () => void;
   setGameMode: (mode: GameMode) => void;
+  setDifficulty: (difficulty: Difficulty) => void;
   revealAnswer: () => void;
 }
 
@@ -78,6 +80,7 @@ export const useGameStore = create<GameStore>((set, get) => ({
   timeLeft: DEFAULT_GAME_TIME,
   gameStatus: 'idle',
   gameMode: 'classic',
+  difficulty: 'normal',
   streak: 0,
   lastPlayDate: null,
   hintsUsed: 0,
@@ -93,8 +96,25 @@ export const useGameStore = create<GameStore>((set, get) => ({
     });
   },
 
-  initGame: (mode: GameMode = 'classic') => {
-    const config = getGameModeConfig(mode);
+  setDifficulty: (difficulty: Difficulty) => {
+    const config = getDifficultyConfig(difficulty);
+    const { gameMode } = get();
+    const modeConfig = getGameModeConfig(gameMode);
+    
+    let newTimeLeft = config.timeLimit;
+    if (modeConfig.timeLimit === null) {
+      newTimeLeft = DEFAULT_GAME_TIME;
+    }
+    
+    set({
+      difficulty: difficulty,
+      timeLeft: newTimeLeft,
+    });
+  },
+
+  initGame: (mode: GameMode = 'classic', difficulty: Difficulty = 'normal') => {
+    const modeConfig = getGameModeConfig(mode);
+    const diffConfig = getDifficultyConfig(difficulty);
     const word = getWordForMode(mode);
     const today = getTodayString();
     const todayRecord = getTodayRecord(today, mode);
@@ -114,7 +134,12 @@ export const useGameStore = create<GameStore>((set, get) => ({
       [shuffled[0], shuffled[shuffled.length - 1]] = [shuffled[shuffled.length - 1], shuffled[0]];
     }
 
-    const initialTime = config.timeLimit || DEFAULT_GAME_TIME;
+    let initialTime: number;
+    if (modeConfig.timeLimit === null) {
+      initialTime = DEFAULT_GAME_TIME;
+    } else {
+      initialTime = diffConfig.timeLimit;
+    }
 
     if (mode === 'classic' && todayRecord) {
       set({
@@ -124,6 +149,7 @@ export const useGameStore = create<GameStore>((set, get) => ({
         timeLeft: initialTime,
         gameStatus: todayRecord.success ? 'success' : 'failed',
         gameMode: mode,
+        difficulty: difficulty,
         streak: streak,
         lastPlayDate: lastDate,
         hintsUsed: todayRecord.hintsUsed,
@@ -139,6 +165,7 @@ export const useGameStore = create<GameStore>((set, get) => ({
         timeLeft: initialTime,
         gameStatus: 'idle',
         gameMode: mode,
+        difficulty: difficulty,
         streak: streak,
         lastPlayDate: lastDate,
         hintsUsed: 0,
@@ -286,10 +313,13 @@ export const useGameStore = create<GameStore>((set, get) => ({
   },
 
   useHint: (): number => {
-    const { currentWord, answerLetters, shuffledLetters, hintsUsed, gameStatus, gameMode } = get();
-    const config = getGameModeConfig(gameMode);
+    const { currentWord, answerLetters, shuffledLetters, hintsUsed, gameStatus, gameMode, difficulty } = get();
+    const modeConfig = getGameModeConfig(gameMode);
+    const diffConfig = getDifficultyConfig(difficulty);
     
-    if (!currentWord || gameStatus !== 'playing' || !config.allowHints) return hintsUsed;
+    const allowHints = modeConfig.allowHints && diffConfig.allowHints;
+    
+    if (!currentWord || gameStatus !== 'playing' || !allowHints) return hintsUsed;
 
     const word = currentWord.word;
     
@@ -371,10 +401,11 @@ export const useGameStore = create<GameStore>((set, get) => ({
   },
 
   retryGame: () => {
-    const { currentWord, gameMode } = get();
+    const { currentWord, gameMode, difficulty } = get();
     if (!currentWord) return;
 
-    const config = getGameModeConfig(gameMode);
+    const modeConfig = getGameModeConfig(gameMode);
+    const diffConfig = getDifficultyConfig(difficulty);
     const today = getTodayString();
     const letters = currentWord.word.split('');
     let shuffled: string[];
@@ -389,10 +420,17 @@ export const useGameStore = create<GameStore>((set, get) => ({
       [shuffled[0], shuffled[shuffled.length - 1]] = [shuffled[shuffled.length - 1], shuffled[0]];
     }
 
+    let resetTime: number;
+    if (modeConfig.timeLimit === null) {
+      resetTime = DEFAULT_GAME_TIME;
+    } else {
+      resetTime = diffConfig.timeLimit;
+    }
+
     set({
       shuffledLetters: shuffled,
       answerLetters: new Array(currentWord.word.length).fill(null),
-      timeLeft: config.timeLimit || DEFAULT_GAME_TIME,
+      timeLeft: resetTime,
       gameStatus: 'playing',
       hintsUsed: 0,
       startTime: Date.now(),

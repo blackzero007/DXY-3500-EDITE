@@ -5,6 +5,7 @@ import { Timer } from './Timer';
 import { useGameStore } from '../store/useGameStore';
 import { useSpeech } from '../hooks/useSpeech';
 import { getGameModeConfig } from '../config/gameModes';
+import { getDifficultyConfig } from '../config/difficulty';
 import { cn } from '../lib/utils';
 import { soundManager } from '../utils/soundManager';
 
@@ -17,6 +18,7 @@ export function GameBoard() {
     answerLetters,
     gameStatus,
     gameMode,
+    difficulty,
     hintsUsed,
     placeLetter,
     removeLetter,
@@ -28,7 +30,10 @@ export function GameBoard() {
     revealAnswer,
   } = useGameStore();
 
-  const config = getGameModeConfig(gameMode);
+  const modeConfig = getGameModeConfig(gameMode);
+  const diffConfig = getDifficultyConfig(difficulty);
+  const allowHints = modeConfig.allowHints && diffConfig.allowHints;
+  const config = modeConfig;
   const [showMeaning, setShowMeaning] = useState(false);
   const [shakeAnswer, setShakeAnswer] = useState(false);
   const [speechRate, setSpeechRate] = useState<SpeechRate>('normal');
@@ -178,7 +183,7 @@ export function GameBoard() {
   };
 
   const handleHint = () => {
-    if (!config.allowHints) return;
+    if (!allowHints) return;
     applyHint();
   };
 
@@ -212,8 +217,8 @@ export function GameBoard() {
           
           <h3 className="text-2xl font-bold text-gray-800 dark:text-gray-100 mb-2">准备好了吗？</h3>
           <p className="text-gray-500 dark:text-gray-400 mb-6">
-            {config.timeLimit !== null 
-              ? `你有 ${config.timeLimit} 秒时间，通过拖拽字母拼出正确的单词`
+            {modeConfig.timeLimit !== null 
+              ? `你有 ${diffConfig.timeLimit} 秒时间，通过拖拽字母拼出正确的单词`
               : '不限时间，通过拖拽字母拼出正确的单词'}
           </p>
           
@@ -504,7 +509,7 @@ export function GameBoard() {
           <span className="hidden sm:inline">重置</span>
         </button>
 
-        {config.allowHints ? (
+        {allowHints ? (
           <button
             onClick={handleHint}
             disabled={isGameOver || gameStatus === 'paused'}
@@ -520,7 +525,7 @@ export function GameBoard() {
           <button
             disabled
             className="flex items-center gap-2 px-4 py-3 bg-gray-100 dark:bg-slate-700 text-gray-400 dark:text-slate-500 rounded-xl font-medium cursor-not-allowed"
-            title="挑战模式禁止使用提示"
+            title="当前难度禁止使用提示"
           >
             <Lightbulb className="w-4 h-4" />
             <span>提示</span>

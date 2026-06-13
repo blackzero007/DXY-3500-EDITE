@@ -7,6 +7,8 @@ export interface Word {
 
 export type GameMode = 'classic' | 'practice' | 'challenge';
 
+export type Difficulty = 'easy' | 'normal' | 'hard';
+
 export type GameStatus = 'idle' | 'playing' | 'paused' | 'success' | 'failed';
 
 export interface GameState {
@@ -16,6 +18,7 @@ export interface GameState {
   timeLeft: number;
   gameStatus: GameStatus;
   gameMode: GameMode;
+  difficulty: Difficulty;
   streak: number;
   lastPlayDate: string | null;
   hintsUsed: number;

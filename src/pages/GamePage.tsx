@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate, useSearchParams } from 'react-router-dom';
 import { ArrowLeft, RotateCcw, Home } from 'lucide-react';
 import { GameBoard } from '@/components/GameBoard';
 import { ResultModal } from '@/components/ResultModal';
@@ -8,13 +8,16 @@ import { useGameStore } from '@/store/useGameStore';
 import { useAchievementStore } from '@/store/useAchievementStore';
 import { useSettingsStore } from '@/store/useSettingsStore';
 import { getGameModeConfig } from '@/config/gameModes';
-import type { GameMode } from '@/types';
+import type { GameMode, Difficulty } from '@/types';
 import { cn } from '@/lib/utils';
 
 export default function GamePage() {
   const { mode } = useParams<{ mode: string }>();
+  const [searchParams] = useSearchParams();
   const navigate = useNavigate();
   const gameMode = (mode as GameMode) || 'classic';
+  const difficultyParam = searchParams.get('difficulty') as Difficulty | null;
+  const difficulty: Difficulty = difficultyParam || 'normal';
   const config = getGameModeConfig(gameMode);
   
   const initGame = useGameStore((s) => s.initGame);
@@ -35,17 +38,17 @@ export default function GamePage() {
 
   useEffect(() => {
     if (mode) {
-      initGame(gameMode);
+      initGame(gameMode, difficulty);
       setKey(prev => prev + 1);
     }
-  }, [mode, gameMode, initGame]);
+  }, [mode, gameMode, difficulty, initGame]);
 
   const handleBack = () => {
     navigate('/');
   };
 
   const handleNextWord = () => {
-    initGame(gameMode);
+    initGame(gameMode, difficulty);
     setKey(prev => prev + 1);
   };
 

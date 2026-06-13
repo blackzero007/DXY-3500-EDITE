@@ -1,17 +1,22 @@
 import { useEffect, useState } from 'react';
 import { Header } from '@/components/Header';
 import { ModeSelector } from '@/components/ModeSelector';
+import { DifficultySelector } from '@/components/DifficultySelector';
 import { BadgeWall } from '@/components/BadgeWall';
 import { SettingsModal } from '@/components/SettingsModal';
 import { HelpGuideModal } from '@/components/HelpGuideModal';
 import { useAchievementStore } from '@/store/useAchievementStore';
+import { useGameStore } from '@/store/useGameStore';
 import { hasShownGuide } from '@/utils/storage';
+import type { Difficulty } from '@/types';
 
 export default function Home() {
   const initAchievements = useAchievementStore((s) => s.initAchievements);
   const checkAchievements = useAchievementStore((s) => s.checkAchievements);
+  const setDifficulty = useGameStore((s) => s.setDifficulty);
   const [showSettings, setShowSettings] = useState(false);
   const [showHelpGuide, setShowHelpGuide] = useState(false);
+  const [selectedDifficulty, setSelectedDifficulty] = useState<Difficulty>('normal');
 
   useEffect(() => {
     initAchievements();
@@ -26,6 +31,11 @@ export default function Home() {
       return () => clearTimeout(timer);
     }
   }, []);
+
+  const handleDifficultyChange = (difficulty: Difficulty) => {
+    setSelectedDifficulty(difficulty);
+    setDifficulty(difficulty);
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-amber-50 via-orange-50 to-teal-50 dark:from-slate-900 dark:via-slate-800 dark:to-slate-900 transition-colors duration-300">
@@ -51,7 +61,14 @@ export default function Home() {
             </p>
           </div>
 
-          <ModeSelector />
+          <DifficultySelector 
+            selectedDifficulty={selectedDifficulty} 
+            onSelect={handleDifficultyChange} 
+          />
+
+          <div className="mt-8">
+            <ModeSelector difficulty={selectedDifficulty} />
+          </div>
 
           <div className="mt-12">
             <BadgeWall />

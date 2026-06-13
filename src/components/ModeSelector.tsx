@@ -1,11 +1,12 @@
 import { useNavigate } from 'react-router-dom';
 import { Clock, Lightbulb, Eye, Flame, BookOpen, Target } from 'lucide-react';
 import { GAME_MODES } from '../config/gameModes';
-import type { GameMode, GameModeConfig } from '../types';
+import type { GameMode, GameModeConfig, Difficulty } from '../types';
 import { cn } from '../lib/utils';
 
 interface ModeSelectorProps {
   onSelectMode?: (mode: GameMode) => void;
+  difficulty?: Difficulty;
 }
 
 const modeIcons: Record<GameMode, typeof Target> = {
@@ -14,14 +15,19 @@ const modeIcons: Record<GameMode, typeof Target> = {
   challenge: Flame,
 };
 
-export function ModeSelector({ onSelectMode }: ModeSelectorProps) {
+export function ModeSelector({ onSelectMode, difficulty }: ModeSelectorProps) {
   const navigate = useNavigate();
 
   const handleModeClick = (mode: GameMode) => {
     if (onSelectMode) {
       onSelectMode(mode);
     } else {
-      navigate(`/game/${mode}`);
+      const searchParams = new URLSearchParams();
+      if (difficulty) {
+        searchParams.set('difficulty', difficulty);
+      }
+      const query = searchParams.toString();
+      navigate(`/game/${mode}${query ? `?${query}` : ''}`);
     }
   };
 
