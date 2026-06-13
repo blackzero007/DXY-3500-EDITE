@@ -57,11 +57,12 @@ export default function GamePage() {
 
   useEffect(() => {
     const handleBeforeUnload = (e: BeforeUnloadEvent) => {
-      saveGameState();
       const status = useGameStore.getState().gameStatus;
       if (status === 'playing' || status === 'paused') {
         e.preventDefault();
+        e.returnValue = '';
       }
+      saveGameState();
     };
     window.addEventListener('beforeunload', handleBeforeUnload);
     return () => {
