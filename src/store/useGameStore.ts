@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import type { GameState, GameStatus, Word, GameMode, Difficulty } from '../types';
+import type { GameState, GameStatus, Word, GameMode, Difficulty, WordDifficulty } from '../types';
 import { wordList } from '../data/words';
 import { seededShuffle, shuffle } from '../utils/shuffle';
 import { getDateSeed, getTodayString, isYesterday } from '../utils/dateUtils';
@@ -13,7 +13,7 @@ import {
 } from '../utils/storage';
 import { useAchievementStore } from './useAchievementStore';
 import { getGameModeConfig } from '../config/gameModes';
-import { getDifficultyConfig } from '../config/difficulty';
+import { getDifficultyConfig, DIFFICULTIES } from '../config/difficulty';
 
 const DEFAULT_GAME_TIME = 60;
 
@@ -35,23 +35,31 @@ interface GameStore extends GameState {
   revealAnswer: () => void;
 }
 
-function getWordOfDay(): Word {
+function getWordsByDifficulty(wordDifficulty: WordDifficulty): Word[] {
+  return wordList.filter((word) => word.difficulty === wordDifficulty);
+}
+
+function getWordOfDay(difficulty: Difficulty): Word {
   const today = getTodayString();
-  const seed = getDateSeed(today);
-  const index = seed % wordList.length;
-  return wordList[index];
+  const diffConfig = DIFFICULTIES[difficulty];
+  const filteredWords = getWordsByDifficulty(diffConfig.wordDifficulty);
+  const seed = getDateSeed(today + difficulty);
+  const index = seed % filteredWords.length;
+  return filteredWords[index];
 }
 
-function getRandomWord(): Word {
-  const randomIndex = Math.floor(Math.random() * wordList.length);
-  return wordList[randomIndex];
+function getRandomWord(difficulty: Difficulty): Word {
+  const diffConfig = DIFFICULTIES[difficulty];
+  const filteredWords = getWordsByDifficulty(diffConfig.wordDifficulty);
+  const randomIndex = Math.floor(Math.random() * filteredWords.length);
+  return filteredWords[randomIndex];
 }
 
-function getWordForMode(mode: GameMode): Word {
+function getWordForMode(mode: GameMode, difficulty: Difficulty): Word {
   if (mode === 'classic') {
-    return getWordOfDay();
+    return getWordOfDay(difficulty);
   }
-  return getRandomWord();
+  return getRandomWord(difficulty);
 }
 
 function calculateNewStreak(lastDate: string | null): number {
@@ -115,7 +123,7 @@ export const useGameStore = create<GameStore>((set, get) => ({
   initGame: (mode: GameMode = 'classic', difficulty: Difficulty = 'normal') => {
     const modeConfig = getGameModeConfig(mode);
     const diffConfig = getDifficultyConfig(difficulty);
-    const word = getWordForMode(mode);
+    const word = getWordForMode(mode, difficulty);
     const today = getTodayString();
     const todayRecord = getTodayRecord(today, mode);
     const lastDate = getLastPlayDate();

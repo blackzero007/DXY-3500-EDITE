@@ -53,7 +53,7 @@ export function DifficultySelector({ selectedDifficulty, onSelect }: DifficultyS
         })}
       </div>
 
-      <div className="mt-4 flex justify-center gap-3 text-xs text-gray-500 dark:text-gray-400">
+      <div className="mt-4 flex flex-col items-center gap-2 text-xs text-gray-500 dark:text-gray-400">
         <div className="flex items-center gap-1">
           <Lightbulb className="w-3.5 h-3.5" />
           <span>
@@ -63,6 +63,12 @@ export function DifficultySelector({ selectedDifficulty, onSelect }: DifficultyS
         <div className="flex items-center gap-1">
           <Zap className="w-3.5 h-3.5" />
           <span>{DIFFICULTIES[selectedDifficulty].description}</span>
+        </div>
+        <div className="flex items-center gap-1">
+          <span className="text-teal-500 font-medium">📝</span>
+          <span>
+            单词长度：{DIFFICULTIES[selectedDifficulty].minLetters}-{DIFFICULTIES[selectedDifficulty].maxLetters} 个字母
+          </span>
         </div>
       </div>
     </div>

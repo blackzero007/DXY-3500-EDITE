@@ -1,8 +1,11 @@
+export type WordDifficulty = 'beginner' | 'intermediate' | 'advanced';
+
 export interface Word {
   word: string;
   meaning: string;
   phonetic?: string;
   example?: string;
+  difficulty: WordDifficulty;
 }
 
 export type GameMode = 'classic' | 'practice' | 'challenge';
@@ -59,6 +62,7 @@ export interface FavoriteWord {
   meaning: string;
   phonetic?: string;
   example?: string;
+  difficulty: WordDifficulty;
   addedAt: number;
 }
 

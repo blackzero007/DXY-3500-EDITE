@@ -1,5 +1,4 @@
 import { useSettingsStore } from '../store/useSettingsStore';
-import type { Theme } from '../utils/storage';
 
 export function useTheme() {
   const theme = useSettingsStore((s) => s.theme);

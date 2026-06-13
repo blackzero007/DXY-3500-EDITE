@@ -1,4 +1,4 @@
-import type { Difficulty } from '../types';
+import type { Difficulty, WordDifficulty } from '../types';
 
 export interface DifficultyConfig {
   id: Difficulty;
@@ -8,6 +8,9 @@ export interface DifficultyConfig {
   allowHints: boolean;
   color: string;
   bgGradient: string;
+  wordDifficulty: WordDifficulty;
+  minLetters: number;
+  maxLetters: number;
 }
 
 export const DIFFICULTIES: Record<Difficulty, DifficultyConfig> = {
@@ -19,6 +22,9 @@ export const DIFFICULTIES: Record<Difficulty, DifficultyConfig> = {
     allowHints: true,
     color: 'green',
     bgGradient: 'from-green-500 to-emerald-600',
+    wordDifficulty: 'beginner',
+    minLetters: 3,
+    maxLetters: 4,
   },
   normal: {
     id: 'normal',
@@ -28,6 +34,9 @@ export const DIFFICULTIES: Record<Difficulty, DifficultyConfig> = {
     allowHints: true,
     color: 'teal',
     bgGradient: 'from-teal-500 to-teal-600',
+    wordDifficulty: 'intermediate',
+    minLetters: 5,
+    maxLetters: 6,
   },
   hard: {
     id: 'hard',
@@ -37,6 +46,9 @@ export const DIFFICULTIES: Record<Difficulty, DifficultyConfig> = {
     allowHints: false,
     color: 'red',
     bgGradient: 'from-red-500 to-orange-600',
+    wordDifficulty: 'advanced',
+    minLetters: 7,
+    maxLetters: 8,
   },
 };
 
