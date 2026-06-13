@@ -3,6 +3,7 @@ import { Header } from '@/components/Header';
 import { ModeSelector } from '@/components/ModeSelector';
 import { DifficultySelector } from '@/components/DifficultySelector';
 import { BadgeWall } from '@/components/BadgeWall';
+import { StatsPanel } from '@/components/StatsPanel';
 import { SettingsModal } from '@/components/SettingsModal';
 import { HelpGuideModal } from '@/components/HelpGuideModal';
 import { useAchievementStore } from '@/store/useAchievementStore';
@@ -72,6 +73,10 @@ export default function Home() {
 
           <div className="mt-12">
             <BadgeWall />
+          </div>
+
+          <div className="mt-4">
+            <StatsPanel />
           </div>
         </main>
 
