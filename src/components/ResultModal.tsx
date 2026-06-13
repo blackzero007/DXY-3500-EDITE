@@ -19,6 +19,26 @@ interface ConfettiPiece {
   color: string;
 }
 
+interface StarParticle {
+  id: number;
+  left: number;
+  delay: number;
+  duration: number;
+  size: number;
+  rotation: number;
+}
+
+interface FireworkParticle {
+  id: number;
+  angle: number;
+  distance: number;
+  delay: number;
+  duration: number;
+  color: string;
+  size: number;
+  burstIndex: number;
+}
+
 export function ResultModal() {
   const { gameStatus, currentWord, timeLeft, hintsUsed, streak, gameMode, startTime, retryGame } = useGameStore();
   const config = getGameModeConfig(gameMode);
@@ -28,6 +48,9 @@ export function ResultModal() {
   const checkAchievements = useAchievementStore((s) => s.checkAchievements);
   const [show, setShow] = useState(false);
   const [confetti, setConfetti] = useState<ConfettiPiece[]>([]);
+  const [starParticles, setStarParticles] = useState<StarParticle[]>([]);
+  const [fireworkParticles, setFireworkParticles] = useState<FireworkParticle[]>([]);
+  const [showRainbowBorder, setShowRainbowBorder] = useState(false);
   const [speechRate, setSpeechRate] = useState<SpeechRate>('normal');
   const [showPoster, setShowPoster] = useState(false);
   const [posterUrl, setPosterUrl] = useState<string | null>(null);
@@ -74,6 +97,45 @@ export function ResultModal() {
         });
       }
       setConfetti(pieces);
+
+      const stars: StarParticle[] = [];
+      for (let i = 0; i < 20; i++) {
+        stars.push({
+          id: i,
+          left: Math.random() * 100,
+          delay: Math.random() * 0.8,
+          duration: 2.5 + Math.random() * 2,
+          size: 10 + Math.random() * 14,
+          rotation: Math.random() * 360,
+        });
+      }
+      setStarParticles(stars);
+
+      const fireworkColors = ['#FF4444', '#FF8800', '#FFDD00', '#44FF44', '#4488FF', '#FF44FF', '#FFFFFF'];
+      const fireworks: FireworkParticle[] = [];
+      const burstCount = 3;
+      for (let b = 0; b < burstCount; b++) {
+        const particleCount = 12 + Math.floor(Math.random() * 8);
+        for (let i = 0; i < particleCount; i++) {
+          fireworks.push({
+            id: b * 20 + i,
+            angle: (360 / particleCount) * i + Math.random() * 15,
+            distance: 80 + Math.random() * 120,
+            delay: b * 0.3 + Math.random() * 0.15,
+            duration: 0.8 + Math.random() * 0.6,
+            color: fireworkColors[Math.floor(Math.random() * fireworkColors.length)],
+            size: 3 + Math.random() * 5,
+            burstIndex: b,
+          });
+        }
+      }
+      setFireworkParticles(fireworks);
+
+      const rainbowTimer = setTimeout(() => {
+        setShowRainbowBorder(true);
+      }, 400);
+
+      return () => clearTimeout(rainbowTimer);
     }
   }, [isSuccess, show]);
 
@@ -207,6 +269,48 @@ export function ResultModal() {
         />
       ))}
 
+      {isSuccess && starParticles.map((star) => (
+        <div
+          key={`star-${star.id}`}
+          className="absolute pointer-events-none"
+          style={{
+            left: `${star.left}%`,
+            top: '-20px',
+            width: `${star.size}px`,
+            height: `${star.size}px`,
+            clipPath: 'polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%)',
+            backgroundColor: '#FFD700',
+            filter: 'drop-shadow(0 0 4px rgba(255, 215, 0, 0.8))',
+            animation: `starFall ${star.duration}s ease-in ${star.delay}s forwards, starTwinkle 0.6s ease-in-out ${star.delay}s infinite alternate`,
+            transform: `rotate(${star.rotation}deg)`,
+          }}
+        />
+      ))}
+
+      {isSuccess && fireworkParticles.map((fw) => {
+        const rad = (fw.angle * Math.PI) / 180;
+        const tx = Math.cos(rad) * fw.distance;
+        const ty = Math.sin(rad) * fw.distance;
+        return (
+          <div
+            key={`fw-${fw.id}`}
+            className="absolute pointer-events-none"
+            style={{
+              left: '50%',
+              top: '50%',
+              width: `${fw.size}px`,
+              height: `${fw.size}px`,
+              borderRadius: '50%',
+              backgroundColor: fw.color,
+              boxShadow: `0 0 ${fw.size * 2}px ${fw.color}, 0 0 ${fw.size}px ${fw.color}`,
+              '--tx': `${tx}px`,
+              '--ty': `${ty}px`,
+              animation: `fireworkBurst${fw.burstIndex} ${fw.duration}s ease-out ${fw.delay}s forwards`,
+            } as React.CSSProperties}
+          />
+        );
+      })}
+
       <div
         className={cn(
           'relative w-full max-w-md bg-white dark:bg-slate-800 rounded-3xl shadow-2xl overflow-hidden',
@@ -237,13 +341,28 @@ export function ResultModal() {
 
         <div className="p-6">
           <div className="text-center mb-6">
-            <div className="flex items-center justify-center gap-2">
-              <h2 className="text-3xl font-bold text-gray-800 dark:text-gray-100 tracking-wide">
+            <div className="relative inline-flex items-center justify-center gap-2">
+              {isSuccess && showRainbowBorder && (
+                <div
+                  className="absolute inset-0 -m-3 rounded-2xl pointer-events-none"
+                  style={{
+                    background: 'linear-gradient(90deg, #FF0000, #FF7700, #FFDD00, #00FF00, #0088FF, #8800FF, #FF00FF, #FF0000)',
+                    backgroundSize: '300% 100%',
+                    animation: 'rainbowShift 2s linear infinite, rainbowExpand 0.6s ease-out forwards',
+                    padding: '2px',
+                    WebkitMask: 'linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)',
+                    WebkitMaskComposite: 'xor',
+                    maskComposite: 'exclude',
+                    borderRadius: '1rem',
+                  }}
+                />
+              )}
+              <h2 className="text-3xl font-bold text-gray-800 dark:text-gray-100 tracking-wide relative z-10">
                 {currentWord?.word.toUpperCase()}
               </h2>
               <button
                 onClick={() => currentWord && toggleFavorite(currentWord)}
-                className="p-2 hover:bg-amber-50 dark:hover:bg-amber-900 rounded-full transition-colors group"
+                className="p-2 hover:bg-amber-50 dark:hover:bg-amber-900 rounded-full transition-colors group relative z-10"
                 title={isFavorited ? '取消收藏' : '收藏单词'}
               >
                 <Star
@@ -385,6 +504,85 @@ export function ResultModal() {
           100% {
             transform: translateY(100vh) rotate(720deg);
             opacity: 0;
+          }
+        }
+
+        @keyframes starFall {
+          0% {
+            transform: translateY(0) rotate(0deg) scale(1);
+            opacity: 1;
+          }
+          50% {
+            opacity: 1;
+          }
+          100% {
+            transform: translateY(100vh) rotate(540deg) scale(0.4);
+            opacity: 0;
+          }
+        }
+
+        @keyframes starTwinkle {
+          0% {
+            filter: drop-shadow(0 0 4px rgba(255, 215, 0, 0.8)) brightness(1);
+          }
+          100% {
+            filter: drop-shadow(0 0 10px rgba(255, 215, 0, 1)) brightness(1.4);
+          }
+        }
+
+        @keyframes fireworkBurst0 {
+          0% {
+            transform: translate(-50%, -50%) translate(0, 0) scale(1);
+            opacity: 1;
+          }
+          100% {
+            transform: translate(-50%, -50%) translate(var(--tx), var(--ty)) scale(0);
+            opacity: 0;
+          }
+        }
+
+        @keyframes fireworkBurst1 {
+          0% {
+            transform: translate(-50%, -50%) translate(0, 0) scale(1);
+            opacity: 1;
+          }
+          100% {
+            transform: translate(-50%, -50%) translate(var(--tx), var(--ty)) scale(0);
+            opacity: 0;
+          }
+        }
+
+        @keyframes fireworkBurst2 {
+          0% {
+            transform: translate(-50%, -50%) translate(0, 0) scale(1);
+            opacity: 1;
+          }
+          100% {
+            transform: translate(-50%, -50%) translate(var(--tx), var(--ty)) scale(0);
+            opacity: 0;
+          }
+        }
+
+        @keyframes rainbowShift {
+          0% {
+            background-position: 0% 50%;
+          }
+          100% {
+            background-position: 300% 50%;
+          }
+        }
+
+        @keyframes rainbowExpand {
+          0% {
+            opacity: 0;
+            transform: scaleX(0);
+          }
+          50% {
+            opacity: 1;
+          }
+          100% {
+            opacity: 1;
+            transform: scaleX(1);
           }
         }
       `}</style>
