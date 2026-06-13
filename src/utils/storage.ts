@@ -1,4 +1,4 @@
-import type { GameRecord, FavoriteWord, AchievementProgress, GameMode } from '../types';
+import type { GameRecord, FavoriteWord, AchievementProgress, GameMode, SavedGameState } from '../types';
 
 const STORAGE_KEYS = {
   GAME_RECORDS: 'word_puzzle_records',
@@ -8,6 +8,7 @@ const STORAGE_KEYS = {
   ACHIEVEMENTS: 'word_puzzle_achievements',
   SETTINGS: 'word_puzzle_settings',
   GUIDE_SHOWN: 'word_puzzle_guide_shown',
+  GAME_STATE: 'word_puzzle_game_state',
 };
 
 export function getGameRecords(): GameRecord[] {
@@ -199,4 +200,40 @@ export function markGuideAsShown(): void {
   } catch {
     console.error('Failed to mark guide as shown');
   }
+}
+
+export function saveGameState(state: SavedGameState): void {
+  try {
+    localStorage.setItem(STORAGE_KEYS.GAME_STATE, JSON.stringify(state));
+  } catch {
+    console.error('Failed to save game state');
+  }
+}
+
+export function loadGameState(): SavedGameState | null {
+  try {
+    const data = localStorage.getItem(STORAGE_KEYS.GAME_STATE);
+    if (!data) return null;
+    const parsed = JSON.parse(data) as SavedGameState;
+    if (!parsed.currentWord || !parsed.savedAt) return null;
+    if (parsed.gameStatus !== 'playing' && parsed.gameStatus !== 'paused' && parsed.gameStatus !== 'idle') return null;
+    return parsed;
+  } catch {
+    return null;
+  }
+}
+
+export function clearGameState(): void {
+  try {
+    localStorage.removeItem(STORAGE_KEYS.GAME_STATE);
+  } catch {
+    console.error('Failed to clear game state');
+  }
+}
+
+export function hasUnfinishedGame(): SavedGameState | null {
+  const state = loadGameState();
+  if (!state) return null;
+  if (state.gameStatus === 'success' || state.gameStatus === 'failed') return null;
+  return state;
 }

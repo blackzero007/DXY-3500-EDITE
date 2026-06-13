@@ -66,6 +66,18 @@ export interface FavoriteWord {
   addedAt: number;
 }
 
+export interface SavedGameState {
+  currentWord: Word;
+  shuffledLetters: string[];
+  answerLetters: (string | null)[];
+  timeLeft: number;
+  gameStatus: GameStatus;
+  gameMode: GameMode;
+  difficulty: Difficulty;
+  hintsUsed: number;
+  savedAt: number;
+}
+
 export type AchievementId =
   | 'first_clear'
   | 'streak_7'

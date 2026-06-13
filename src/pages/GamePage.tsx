@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { useParams, useNavigate, useSearchParams } from 'react-router-dom';
 import { ArrowLeft, RotateCcw, Home } from 'lucide-react';
 import { GameBoard } from '@/components/GameBoard';
@@ -10,6 +10,7 @@ import { useSettingsStore } from '@/store/useSettingsStore';
 import { getGameModeConfig } from '@/config/gameModes';
 import { getDifficultyConfig } from '@/config/difficulty';
 import type { GameMode, Difficulty } from '@/types';
+import { loadGameState } from '@/utils/storage';
 import { cn } from '@/lib/utils';
 
 export default function GamePage() {
@@ -26,11 +27,15 @@ export default function GamePage() {
   const gameStatus = useGameStore((s) => s.gameStatus);
   const currentWord = useGameStore((s) => s.currentWord);
   const retryGame = useGameStore((s) => s.retryGame);
+  const saveGameState = useGameStore((s) => s.saveGameState);
+  const restoreGameState = useGameStore((s) => s.restoreGameState);
+  const clearSavedGameState = useGameStore((s) => s.clearSavedGameState);
   const initAchievements = useAchievementStore((s) => s.initAchievements);
   const checkAchievements = useAchievementStore((s) => s.checkAchievements);
   const initSettings = useSettingsStore((s) => s.initSettings);
 
   const [key, setKey] = useState(0);
+  const restoredRef = useRef(false);
 
   useEffect(() => {
     initAchievements();
@@ -39,13 +44,40 @@ export default function GamePage() {
   }, [initAchievements, checkAchievements, initSettings]);
 
   useEffect(() => {
-    if (mode) {
+    if (!mode) return;
+    const saved = loadGameState();
+    if (saved && saved.gameMode === gameMode && saved.difficulty === difficulty && !restoredRef.current) {
+      restoreGameState(saved);
+      restoredRef.current = true;
+    } else {
       initGame(gameMode, difficulty);
-      setKey(prev => prev + 1);
     }
-  }, [mode, gameMode, difficulty, initGame]);
+    setKey(prev => prev + 1);
+  }, [mode]);
+
+  useEffect(() => {
+    const handleBeforeUnload = (e: BeforeUnloadEvent) => {
+      saveGameState();
+      const status = useGameStore.getState().gameStatus;
+      if (status === 'playing' || status === 'paused') {
+        e.preventDefault();
+      }
+    };
+    window.addEventListener('beforeunload', handleBeforeUnload);
+    return () => {
+      window.removeEventListener('beforeunload', handleBeforeUnload);
+      saveGameState();
+    };
+  }, [saveGameState]);
+
+  useEffect(() => {
+    if (gameStatus === 'success' || gameStatus === 'failed') {
+      clearSavedGameState();
+    }
+  }, [gameStatus, clearSavedGameState]);
 
   const handleBack = () => {
+    saveGameState();
     navigate('/');
   };
 

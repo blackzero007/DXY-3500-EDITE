@@ -10,6 +10,8 @@ import {
   getLastPlayDate,
   saveGameRecord,
   getTodayRecord,
+  saveGameState as persistGameState,
+  clearGameState,
 } from '../utils/storage';
 import { useAchievementStore } from './useAchievementStore';
 import { getGameModeConfig } from '../config/gameModes';
@@ -33,6 +35,9 @@ interface GameStore extends GameState {
   setGameMode: (mode: GameMode) => void;
   setDifficulty: (difficulty: Difficulty) => void;
   revealAnswer: () => void;
+  saveGameState: () => void;
+  restoreGameState: (saved: import('../types').SavedGameState) => void;
+  clearSavedGameState: () => void;
 }
 
 function getWordsByDifficulty(wordDifficulty: WordDifficulty): Word[] {
@@ -458,5 +463,48 @@ export const useGameStore = create<GameStore>((set, get) => ({
       answerLetters: letters,
       shuffledLetters: new Array(letters.length).fill(''),
     });
+  },
+
+  saveGameState: () => {
+    const { currentWord, shuffledLetters, answerLetters, timeLeft, gameStatus, gameMode, difficulty, hintsUsed } = get();
+    if (!currentWord) return;
+    if (gameStatus !== 'playing' && gameStatus !== 'paused' && gameStatus !== 'idle') {
+      clearGameState();
+      return;
+    }
+    persistGameState({
+      currentWord,
+      shuffledLetters,
+      answerLetters,
+      timeLeft,
+      gameStatus,
+      gameMode,
+      difficulty,
+      hintsUsed,
+      savedAt: Date.now(),
+    });
+  },
+
+  restoreGameState: (saved) => {
+    set({
+      currentWord: saved.currentWord,
+      shuffledLetters: saved.shuffledLetters,
+      answerLetters: saved.answerLetters,
+      timeLeft: saved.timeLeft,
+      gameStatus: saved.gameStatus === 'playing' ? 'paused' : saved.gameStatus,
+      gameMode: saved.gameMode,
+      difficulty: saved.difficulty,
+      hintsUsed: saved.hintsUsed,
+      startTime: null,
+      totalPausedDuration: 0,
+      pauseStartTime: null,
+      streak: getStreak(),
+      lastPlayDate: getLastPlayDate(),
+    });
+    clearGameState();
+  },
+
+  clearSavedGameState: () => {
+    clearGameState();
   },
 }));
