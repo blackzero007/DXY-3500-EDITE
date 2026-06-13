@@ -8,6 +8,7 @@ import { useGameStore } from '@/store/useGameStore';
 import { useAchievementStore } from '@/store/useAchievementStore';
 import { useSettingsStore } from '@/store/useSettingsStore';
 import { getGameModeConfig } from '@/config/gameModes';
+import { getDifficultyConfig } from '@/config/difficulty';
 import type { GameMode, Difficulty } from '@/types';
 import { cn } from '@/lib/utils';
 
@@ -19,6 +20,7 @@ export default function GamePage() {
   const difficultyParam = searchParams.get('difficulty') as Difficulty | null;
   const difficulty: Difficulty = difficultyParam || 'normal';
   const config = getGameModeConfig(gameMode);
+  const diffConfig = getDifficultyConfig(difficulty);
   
   const initGame = useGameStore((s) => s.initGame);
   const gameStatus = useGameStore((s) => s.gameStatus);
@@ -109,9 +111,9 @@ export default function GamePage() {
                gameMode === 'practice' ? '轻松练习' : '极限挑战'}
             </h2>
             <p className="text-gray-500 dark:text-gray-400 text-sm">
-              {gameMode === 'classic' && '拖拽字母，在60秒内拼出正确的单词'}
+              {gameMode === 'classic' && `拖拽字母，在${diffConfig.timeLimit}秒内拼出正确的单词`}
               {gameMode === 'practice' && '拖拽字母，不限时间，可随时查看答案'}
-              {gameMode === 'challenge' && '拖拽字母，在30秒内拼出正确的单词，禁止使用提示'}
+              {gameMode === 'challenge' && `拖拽字母，在${diffConfig.timeLimit}秒内拼出正确的单词${diffConfig.allowHints ? '' : '，禁止使用提示'}`}
             </p>
           </div>
 
